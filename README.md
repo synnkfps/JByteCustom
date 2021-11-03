@@ -1,4 +1,4 @@
-# JByteMod-Remastered
+# JByteCustom
 A fork of JByteMod-Reborn, with more updates. USES KOFFEE DECOMPILER!
 
 ## NOTES
