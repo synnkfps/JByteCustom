@@ -1,0 +1,109 @@
+buildscript {
+    ext.kotlin_version = '1.3.50'
+    repositories {
+        mavenCentral()
+        maven { url = 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10"
+    }
+}
+
+apply plugin: "java"
+apply plugin: 'kotlin'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+group = project_Group
+version = project_Version
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'https://repo1.maven.org/maven2/'
+        metadataSources {
+             artifact() //Look directly for artifact
+        }
+    }
+    maven { url = "http://jcenter.bintray.com/" }
+}
+
+dependencies {
+	compile 'commons-io:commons-io:2.8.0'
+	compile 'com.fifesoft:rsyntaxtextarea:3.1.1'
+	compile 'club.minnced:java-discord-rpc:2.0.2'
+	compile 'org.bitbucket.mstrobel:procyon-core:0.5.36'
+	compile 'org.bitbucket.mstrobel:procyon-expressions:0.5.36'
+	compile 'org.bitbucket.mstrobel:procyon-reflection:0.5.36'
+	compile 'org.bitbucket.mstrobel:procyon-compilertools:0.5.36'
+	compile 'org.tinyjee.jgraphx:jgraphx:3.4.1.3'
+	compile 'org.jfree:jfreechart:1.5.1'
+	compile 'com.weblookandfeel:weblaf-ui:1.2.9'
+	compile 'org.benf:cfr:0.151'
+	compile 'commons-cli:commons-cli:1.4'
+	compile 'org.apache.ant:ant:1.10.11'
+	compile 'com.google.guava:guava:30.0-jre'
+	compile 'com.google.code.gson:gson:2.8.6'
+	compile 'net.java.dev.jna:jna:4.4.0'
+	compile 'com.formdev:flatlaf:1.0'
+	compile files('libs/attach-1.7.jar')
+	compile files('libs/weblaf-complete-1.29-fixed.jar')
+	compile files('libs/weblookandfeel.jar')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+
+shadowJar {
+    dependencies {
+        include(dependency('commons-io:commons-io:2.8.0'))
+        include(dependency('com.fifesoft:rsyntaxtextarea:3.1.1'))
+        include(dependency('club.minnced:java-discord-rpc:2.0.2'))
+        include(dependency('org.bitbucket.mstrobel:procyon-core:0.5.36'))
+        include(dependency('org.bitbucket.mstrobel:procyon-expressions:0.5.36'))
+        include(dependency('org.bitbucket.mstrobel:procyon-reflection:0.5.36'))
+        include(dependency('org.bitbucket.mstrobel:procyon-compilertools:0.5.36'))
+        include(dependency('org.tinyjee.jgraphx:jgraphx:3.4.1.3'))
+        include(dependency('org.jfree:jfreechart:1.5.1'))
+        include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk7'))
+        include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))
+        include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
+        include(dependency('com.weblookandfeel:weblaf-ui:1.2.9'))
+        include(dependency('org.benf:cfr:0.151'))
+        include(dependency('com.sun:attach:1.7'))
+        include(dependency('commons-cli:commons-cli:1.4'))
+        include(dependency('org.apache.ant:ant:1.10.11'))
+        include(dependency('com.google.guava:guava:30.0-jre'))
+        include(dependency('com.google.code.gson:gson:2.8.6'))
+        include(dependency('net.java.dev.jna:jna:4.4.0'))
+        include(dependency('com.formdev:flatlaf:1.0'))
+    }
+    exclude 'dummyThing'
+    exclude 'LICENSE.txt'
+    exclude 'LICENSE'
+    classifier = 'release'
+}
+
+jar {
+    manifest {
+       attributes(
+                "Manifest-Version": 1.0,
+                "Main-Class": "me.grax.jbytemod.JByteMod"
+        )
+    }
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+build.dependsOn(shadowJar)
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}

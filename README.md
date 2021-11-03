@@ -1,2 +1,5 @@
-# JByteCustom 1.0.0
- A Improved JByteMod Fork. Based on JByteMod-Reborn & JByteMod-Remastered.
+# JByteMod-Remastered
+A fork of JByteMod-Reborn, with more updates.
+
+# Contributors
+GraxCode, UltraPanda, Ho3, xBrownieCodez, gtx, Vaziak, Johnshiozo
