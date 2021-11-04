@@ -1,1 +1,19 @@
-rootProject.name = 'JByteCustom'
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = "https://jitpack.io/" }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.id) {
+                case "org.jetbrains.kotlin":
+                    useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+                    break
+            }
+        }
+    }
+}
+
+rootProject.name = "JByteCustom"
