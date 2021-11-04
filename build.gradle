@@ -46,7 +46,7 @@ dependencies {
 	include 'com.weblookandfeel:weblaf-ui:1.2.9'
 	include 'org.benf:cfr:0.151'
 	include 'commons-cli:commons-cli:1.4'
-	include 'org.apache.ant:ant:1.10.11'
+	include 'org.apache.ant:ant:1.10.12'
 	include 'com.google.guava:guava:30.0-jre'
 	include 'com.google.code.gson:gson:2.8.6'
 	include 'net.java.dev.jna:jna:4.4.0'
