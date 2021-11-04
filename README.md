@@ -4,7 +4,7 @@ A fork of JByteMod-Reborn, with more updates. USES KOFFEE DECOMPILER!<br>
 ***THOSE VERSIONS WILL NOT CHANGE THE PERFORMANCE.***<br>
 ***EXAMPLE:***
 - Version 1.1.2 don't have class Methods support in their RPC.
-- Version 1.1.2-b2 have class Methods support in their RPC.
+- Version 1.1.2-b2 have class Methods support in their RPC.<br>
 *Nothing related to performance changed. That's how ghost updates will work.*
 
 ## NOTES
