@@ -17,7 +17,7 @@ public class MySplitPane extends JSplitPane {
         leftSide.add(new JScrollPane(classTree), BorderLayout.CENTER);
         this.setLeftComponent(leftSide);
         this.setRightComponent(rightSide);
-        this.setDividerLocation(150);
+        this.setDividerLocation(280);
         this.setContinuousLayout(true);
     }
 }

@@ -38,11 +38,14 @@ public class MyMenuBar extends JMenuBar {
     private JByteMod jbm;
     private File lastFile;
     private boolean agent;
+    private JPanel center;
 
     public MyMenuBar(JByteMod jam, boolean agent) {
         this.jbm = jam;
         this.agent = agent;
         this.initFileMenu();
+        this.center = new JPanel();
+        center.setLayout(new GridLayout());
     }
 
 
@@ -68,6 +71,7 @@ public class MyMenuBar extends JMenuBar {
                 }
             });
             saveas.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     openSaveDialogue();
                 }

@@ -388,6 +388,11 @@ public class JByteMod extends JFrame {
         this.refreshTree();
     }
 
+    // RESET
+    public void resetWorkspace() {
+
+    }
+
     public void refreshTree() {
         LOGGER.log("Building tree..");
         this.jarTree.refreshTree(file);
