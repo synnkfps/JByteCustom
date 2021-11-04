@@ -152,7 +152,7 @@ public class MyEditorTab extends JPanel {
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
 
-        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
+        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class on " + mn.name + " method");
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, mn, false);
         }
