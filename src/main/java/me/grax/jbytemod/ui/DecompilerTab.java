@@ -1,7 +1,10 @@
 package me.grax.jbytemod.ui;
 
+import club.minnced.discord.rpc.DiscordRPC;
+import club.minnced.discord.rpc.DiscordRichPresence;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.decompiler.*;
+import me.grax.jbytemod.discord.Discord;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -19,17 +22,23 @@ import java.util.zip.ZipInputStream;
 
 
 public class DecompilerTab extends JPanel {
-    private static File tempDir = new File(System.getProperty("java.io.tmpdir"));
-    private static File userDir = new File(System.getProperty("user.dir"));
-    protected Decompilers decompiler = Decompilers.CFR;
-    private DecompilerPanel dp;
-    private JLabel label;
-    private JByteMod jbm;
-    private JButton compile = new JButton("Compile");
+    private static final File tempDir = new File(System.getProperty("java.io.tmpdir"));
+    private static final File userDir = new File(System.getProperty("user.dir"));
+    public static DiscordRPC discordRPC;
+    DiscordRichPresence presence = new DiscordRichPresence();
+    public static String decomp = null;
+    public static Decompilers decompiler = Decompilers.CFR;
+    public static DecompilerPanel dp;
+    private final JLabel label;
+    private final JByteMod jbm;
+    private final JButton compile = new JButton("Compile");
+
+    static {
+        dp = new DecompilerPanel();
+    }
 
     public DecompilerTab(JByteMod jbm) {
         this.jbm = jbm;
-        this.dp = new DecompilerPanel();
         this.label = new JLabel(decompiler + " Decompiler");
         jbm.setDP(dp);
         this.setLayout(new BorderLayout(0, 0));
@@ -42,11 +51,26 @@ public class DecompilerTab extends JPanel {
         for (int i = 0; i < 3; i++)
             rs.add(new JPanel());
         JComboBox<Decompilers> decompilerCombo = new JComboBox<Decompilers>(Decompilers.values());
-        decompilerCombo.addActionListener(new ActionListener() {
 
+        Discord.currentDecompiler = decompiler.getName() + " " + decompiler.getVersion();
+        Discord.updateDecompiler(Discord.currentDecompiler);
+
+        if (Discord.decompilerUsed.equalsIgnoreCase("Koffee")) {
+            presence.smallImageText = "Using " + decompiler + " Disassembler";
+        } else {
+            Discord.presence.smallImageText = "Using " + decompiler + " Decompiler";
+        }
+        Discord.refresh();
+
+        decompilerCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DecompilerTab.this.decompiler = (Decompilers) decompilerCombo.getSelectedItem();
+                assert decompiler != null;
                 label.setText(decompiler.getName() + " " + decompiler.getVersion());
+
+                Discord.currentDecompiler = decompiler.getName() + " " + decompiler.getVersion();
+                Discord.updateDecompiler(Discord.currentDecompiler);
+
                 decompile(Decompiler.last, Decompiler.lastMn, true);
             }
         });
@@ -112,7 +136,6 @@ public class DecompilerTab extends JPanel {
         compile.setVisible(false);
         dp.setEditable(false);
 
-
         switch (decompiler) {
             case PROCYON:
                 d = new ProcyonDecompiler(jbm, dp);
@@ -129,7 +152,6 @@ public class DecompilerTab extends JPanel {
             case KOFFEE:
                 d = new KoffeeDecompiler(jbm, dp);
                 break;
-
         }
         d.setNode(cn, mn);
         if (deleteCache) {

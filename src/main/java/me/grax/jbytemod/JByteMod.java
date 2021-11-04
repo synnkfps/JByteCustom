@@ -50,7 +50,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class JByteMod extends JFrame {
-    public final static String version = "1.0.0";
+    public final static String version = "1.1.0";
     private static final String jbytemod = "JByteCustom v" + version;
 
     public static File workingDir = new File(".");
@@ -172,7 +172,6 @@ public class JByteMod extends JFrame {
         res = new LanguageRes();
         ops = new Options();
         Discord.init();
-
         try {
             System.setProperty("file.encoding", "UTF-8");
             Field charset = Charset.class.getDeclaredField("defaultCharset");
@@ -195,6 +194,7 @@ public class JByteMod extends JFrame {
 
         CommandLineParser parser = new DefaultParser();
         CommandLine line;
+
         try {
             line = parser.parse(options, args);
         } catch (org.apache.commons.cli.ParseException e) {

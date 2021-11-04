@@ -1,5 +1,7 @@
 package me.grax.jbytemod.ui;
 
+import club.minnced.discord.rpc.DiscordRPC;
+import club.minnced.discord.rpc.DiscordRichPresence;
 import com.alee.extended.breadcrumb.WebBreadcrumb;
 import com.alee.extended.breadcrumb.WebBreadcrumbToggleButton;
 import com.alee.utils.SwingUtils;
@@ -16,7 +18,7 @@ import java.awt.*;
 public class MyEditorTab extends JPanel {
     private static String analysisText = JByteMod.res.getResource("analysis");
     private MyCodeEditor codeEditor;
-    private JLabel label;
+    public static JLabel label;
     private JPanel code, info;
     private DecompilerTab decompiler;
     private ControlFlowPanel analysis;
@@ -25,13 +27,14 @@ public class MyEditorTab extends JPanel {
     private WebBreadcrumbToggleButton analysisBtn;
     private WebBreadcrumbToggleButton codeBtn;
     private boolean classSelected = false;
+    public static DiscordRPC discordRPC;
+    DiscordRichPresence presence = new DiscordRichPresence();
 
     public MyEditorTab(JByteMod jbm) {
         setLayout(new BorderLayout());
         this.center = new JPanel();
         center.setLayout(new GridLayout());
         this.label = new JLabel("JByteCustom");
-
         this.codeEditor = new MyCodeEditor(jbm, label);
         jbm.setCodeList(codeEditor.getEditor());
         this.code = withBorder(label, codeEditor);
@@ -70,6 +73,8 @@ public class MyEditorTab extends JPanel {
         });
         decompilerBtn = new WebBreadcrumbToggleButton("Decompiler");
         decompilerBtn.addActionListener(e -> {
+            Discord.currentDecompiler = DecompilerTab.decompiler.getName() + " " + DecompilerTab.decompiler.getVersion();
+            Discord.updateDecompiler(Discord.currentDecompiler);
             if (center.getComponent(0) != decompiler) {
                 center.removeAll();
                 center.add(decompiler);
@@ -123,8 +128,9 @@ public class MyEditorTab extends JPanel {
     }
 
     public void selectClass(ClassNode cn) {
-        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + cn.name);
-
+        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + cn.sourceFile);
+        // Discord.currentDecompiler = "test!!!";
+        // Discord.updateDecompiler(Discord.currentDecompiler);
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, null, false);
         }
@@ -135,7 +141,7 @@ public class MyEditorTab extends JPanel {
     }
 
     public void selectMethod(ClassNode cn, MethodNode mn) {
-        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + cn.name + "." + mn.name);
+        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + cn.sourceFile);
 
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, mn, false);
