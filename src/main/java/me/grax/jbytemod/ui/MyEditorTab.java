@@ -4,6 +4,8 @@ import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 import com.alee.extended.breadcrumb.WebBreadcrumb;
 import com.alee.extended.breadcrumb.WebBreadcrumbToggleButton;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import com.alee.utils.SwingUtils;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.discord.Discord;
@@ -19,6 +21,7 @@ public class MyEditorTab extends JPanel {
     private static String analysisText = JByteMod.res.getResource("analysis");
     private MyCodeEditor codeEditor;
     public static JLabel label;
+
     private JPanel code, info;
     private DecompilerTab decompiler;
     private ControlFlowPanel analysis;
@@ -128,7 +131,11 @@ public class MyEditorTab extends JPanel {
     }
 
     public void selectClass(ClassNode cn) {
-        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + cn.sourceFile);
+        String regexed = cn.name.toString();
+        final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
+        final Matcher matcher = pattern.matcher(regexed);
+
+        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
         // Discord.currentDecompiler = "test!!!";
         // Discord.updateDecompiler(Discord.currentDecompiler);
         if (decompilerBtn.isSelected()) {
@@ -141,8 +148,11 @@ public class MyEditorTab extends JPanel {
     }
 
     public void selectMethod(ClassNode cn, MethodNode mn) {
-        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + cn.sourceFile);
+        String regexed = cn.name.toString();
+        final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
+        final Matcher matcher = pattern.matcher(regexed);
 
+        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, mn, false);
         }
