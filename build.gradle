@@ -35,22 +35,22 @@ configurations {
 
 dependencies {
 	include 'commons-io:commons-io:2.8.0'
-	include 'com.fifesoft:rsyntaxtextarea:3.1.1'
+	include 'com.fifesoft:rsyntaxtextarea:3.1.3'
 	include 'club.minnced:java-discord-rpc:2.0.2'
 	include 'org.bitbucket.mstrobel:procyon-core:0.5.36'
 	include 'org.bitbucket.mstrobel:procyon-expressions:0.5.36'
 	include 'org.bitbucket.mstrobel:procyon-reflection:0.5.36'
 	include 'org.bitbucket.mstrobel:procyon-compilertools:0.5.36'
 	include 'org.tinyjee.jgraphx:jgraphx:3.4.1.3'
-	include 'org.jfree:jfreechart:1.5.1'
-	include 'com.weblookandfeel:weblaf-ui:1.2.9'
+	include 'org.jfree:jfreechart:1.5.3'
+	include 'com.weblookandfeel:weblaf-ui:1.2.13'
 	include 'org.benf:cfr:0.151'
 	include 'commons-cli:commons-cli:1.4'
-	include 'org.apache.ant:ant:1.10.11'
-	include 'com.google.guava:guava:30.0-jre'
-	include 'com.google.code.gson:gson:2.8.6'
-	include 'net.java.dev.jna:jna:4.4.0'
-	include 'com.formdev:flatlaf:1.0'
+	include 'org.apache.ant:ant:1.10.12'
+	include 'com.google.guava:guava:31.0.1-jre'
+	include 'com.google.code.gson:gson:2.8.9'
+	include 'net.java.dev.jna:jna:5.9.0'
+	include 'com.formdev:flatlaf:1.6.1'
 	include files('libs/attach-1.7.jar')
 	include files('libs/weblaf-complete-1.29-fixed.jar')
 	include files('libs/weblookandfeel.jar')
@@ -71,26 +71,26 @@ jar {
 shadowJar {
     dependencies {
         include(dependency('commons-io:commons-io:2.8.0'))
-        include(dependency('com.fifesoft:rsyntaxtextarea:3.1.1'))
+        include(dependency('com.fifesoft:rsyntaxtextarea:3.1.3'))
         include(dependency('club.minnced:java-discord-rpc:2.0.2'))
         include(dependency('org.bitbucket.mstrobel:procyon-core:0.5.36'))
         include(dependency('org.bitbucket.mstrobel:procyon-expressions:0.5.36'))
         include(dependency('org.bitbucket.mstrobel:procyon-reflection:0.5.36'))
         include(dependency('org.bitbucket.mstrobel:procyon-compilertools:0.5.36'))
         include(dependency('org.tinyjee.jgraphx:jgraphx:3.4.1.3'))
-        include(dependency('org.jfree:jfreechart:1.5.1'))
+        include(dependency('org.jfree:jfreechart:1.5.3'))
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk7'))
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
-        include(dependency('com.weblookandfeel:weblaf-ui:1.2.9'))
+        include(dependency('com.weblookandfeel:weblaf-ui:1.2.13'))
         include(dependency('org.benf:cfr:0.151'))
         include(dependency('com.sun:attach:1.7'))
         include(dependency('commons-cli:commons-cli:1.4'))
-        include(dependency('org.apache.ant:ant:1.10.11'))
-        include(dependency('com.google.guava:guava:30.0-jre'))
-        include(dependency('com.google.code.gson:gson:2.8.6'))
-        include(dependency('net.java.dev.jna:jna:4.4.0'))
-        include(dependency('com.formdev:flatlaf:1.0'))
+        include(dependency('org.apache.ant:ant:1.10.12'))
+        include(dependency('com.google.guava:guava:31.0.1-jre'))
+        include(dependency('com.google.code.gson:gson:2.8.9'))
+        include(dependency('net.java.dev.jna:jna:5.9.0'))
+        include(dependency('com.formdev:flatlaf:1.6.1'))
     }
     exclude 'dummyThing'
     exclude 'LICENSE.txt'
