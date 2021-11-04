@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class PageEndPanel extends JPanel {
 
-    private static final String copyright = "\u00A9 GraxCode 2016 - 2019";
+    private static final String copyright = "\u00A9 JByteCustom - 2021 ";
     private JProgressBar pb;
     private JLabel percent;
     private JLabel label;
@@ -37,7 +37,7 @@ public class PageEndPanel extends JPanel {
         label.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
         this.add(label);
         memoryBar = new WebMemoryBar();
-        memoryBar.setShowMaximumMemory(false);
+        memoryBar.setShowMaximumMemory(true); // More memory. Preventing crash due memory extrapolation.
         this.add(memoryBar);
 
     }
