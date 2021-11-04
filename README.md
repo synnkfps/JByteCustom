@@ -2,10 +2,11 @@
 A fork of JByteMod-Reborn, with more updates. USES KOFFEE DECOMPILER!
 
 ## NOTES
-- Koffee Decompiler (VERY USEFUL FOR BYTECODE UNDERSTANDING)
+- Koffee Disassembler (VERY USEFUL FOR BYTECODE UNDERSTANDING)
 - Up-to-date Decompilers.
+- Up-to-date Libs
 - Best settings by default
-- Better DiscordRPC
+- Advanced Discord RPC
 
 ## INSTALLATION & BUILDING
 - Extract the .zip that you downloaded from github
