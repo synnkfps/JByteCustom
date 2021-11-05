@@ -28,7 +28,7 @@ A fork of JByteMod-Reborn, with more updates. USES KOFFEE DECOMPILER!
 Added "Change RPC" Option to File tab in the menus.<br>
 How to use:
 - After clicking on "Change RPC", a new Window will appear.
-- Input your new custom state text. | ***NOTE: LEAVE EMPTY IF YOU WANT TO RESET YOUR RPC STATE TEXT.
+- Input your new custom state text. <br>***NOTE: LEAVE EMPTY IF YOU WANT TO RESET YOUR RPC STATE TEXT.
 - Press Apply button for apply the changes.
 <br> ***NOTE: FOR NOW, CUSTOM RPC ONLY WORKS WHEN EDITING CLASSES, NOT METHODS.
 
