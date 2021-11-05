@@ -3,8 +3,10 @@ package me.grax.jbytemod.ui;
 import android.util.Patterns;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
+import me.grax.jbytemod.CustomRPC;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.JarArchive;
+import me.grax.jbytemod.discord.Discord;
 import me.grax.jbytemod.plugin.Plugin;
 import me.grax.jbytemod.res.LanguageRes;
 import me.grax.jbytemod.res.Option;
@@ -35,10 +37,12 @@ import java.util.List;
 public class MyMenuBar extends JMenuBar {
 
     private static final Icon searchIcon = new ImageIcon(MyMenuBar.class.getResource("/resources/search.png"));
-    private JByteMod jbm;
     private File lastFile;
     private boolean agent;
     private JPanel center;
+
+    private static JByteMod jbm;
+    public static RPCFrame rpcFrame = new RPCFrame(jbm);
 
     public MyMenuBar(JByteMod jam, boolean agent) {
         this.jbm = jam;
@@ -56,31 +60,46 @@ public class MyMenuBar extends JMenuBar {
             JMenuItem save = new JMenuItem(JByteMod.res.getResource("save"));
             JMenuItem saveas = new JMenuItem(JByteMod.res.getResource("save_as"));
             JMenuItem load = new JMenuItem(JByteMod.res.getResource("load"));
+            JMenuItem changeRPC = new JMenuItem("Change RPC");
             load.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     openLoadDialogue();
                 }
             });
-            save.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (lastFile != null) {
-                        jbm.saveFile(lastFile);
-                    } else {
-                        openSaveDialogue();
+            changeRPC.addActionListener(e->{
+                rpcFrame.setVisible(true);
+
+                RPCFrame.buttonLogin.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        // Se o RPC State do RPCFrame estiver vazio, é porque ele vai ser vanilla
+                        if (RPCFrame.fieldUsername.getText().equalsIgnoreCase("")) {
+                            CustomRPC.isCustom = false;
+                            Discord.refresh();
+                        // Se o RPC for custom (ou seja, o state não estiver vazio;
+                        } else if (!RPCFrame.fieldUsername.getText().equalsIgnoreCase("")) {
+                            CustomRPC.isCustom = true;
+                            CustomRPC.customStatus = RPCFrame.fieldUsername.getText(); // mudar o customstatus para o custom state
+                            Discord.updateCustomState(RPCFrame.fieldUsername.getText()); // dar update no status
+                        }
+                        rpcFrame.setVisible(false);
+                        // se ele não estiver usando: fazer com que seja o rpc normal
                     }
-                }
+                });
             });
-            saveas.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
+            save.addActionListener(e -> {
+                if (lastFile != null) {
+                    jbm.saveFile(lastFile);
+                } else {
                     openSaveDialogue();
                 }
             });
+            saveas.addActionListener(e -> openSaveDialogue());
             save.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             load.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             file.add(save);
             file.add(saveas);
             file.add(load);
+            file.add(changeRPC);
         } else {
             JMenuItem refresh = new JMenuItem(JByteMod.res.getResource("refresh"));
             refresh.addActionListener(new ActionListener() {

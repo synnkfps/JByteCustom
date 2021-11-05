@@ -1,9 +1,11 @@
 package me.grax.jbytemod.decompiler;
 
 import me.grax.jbytemod.JByteMod;
+import me.grax.jbytemod.discord.Discord;
 import me.grax.jbytemod.ui.DecompilerPanel;
 import me.lpk.util.JarUtils;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
+import org.benf.cfr.reader.entities.exceptions.ExceptionCheck;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.io.*;

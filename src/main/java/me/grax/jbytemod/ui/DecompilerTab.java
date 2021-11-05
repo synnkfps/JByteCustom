@@ -54,12 +54,8 @@ public class DecompilerTab extends JPanel {
 
         Discord.currentDecompiler = decompiler.getName() + " " + decompiler.getVersion();
         Discord.updateDecompiler(Discord.currentDecompiler);
+        Discord.presence.smallImageText = "Using " + decompiler + " Decompiler";
 
-        if (Discord.decompilerUsed.equalsIgnoreCase("Koffee")) {
-            presence.smallImageText = "Using " + decompiler + " Disassembler";
-        } else {
-            Discord.presence.smallImageText = "Using " + decompiler + " Decompiler";
-        }
         Discord.refresh();
 
         decompilerCombo.addActionListener(new ActionListener() {

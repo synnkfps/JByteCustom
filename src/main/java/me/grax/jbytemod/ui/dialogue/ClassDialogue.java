@@ -284,7 +284,7 @@ public class ClassDialogue {
         try {
             Object o = f.get(object);
             return o instanceof AbstractCollection;
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
         return false;
     }
@@ -354,7 +354,7 @@ public class ClassDialogue {
             case 7:
                 return new JTextField(new String((char[]) o));
             case 8:
-                return new JTextField(new String(((Type) o).getInternalName()));
+                return new JTextField(((Type) o).getInternalName());
         }
         if (Number.class.isAssignableFrom(c) || (c.isPrimitive() && !char.class.isAssignableFrom(c))) {
             try {
@@ -435,7 +435,7 @@ public class ClassDialogue {
             return new LimitDocument();
         }
 
-        private class LimitDocument extends PlainDocument {
+        private static class LimitDocument extends PlainDocument {
             private static final long serialVersionUID = 1L;
 
             @Override

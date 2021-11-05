@@ -1,5 +1,6 @@
 package me.grax.jbytemod.utils.task;
 
+import me.grax.jbytemod.CustomRPC;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.JarArchive;
 import me.grax.jbytemod.discord.Discord;
@@ -176,7 +177,7 @@ public class LoadTask extends SwingWorker<Void, Integer> {
 
             if (memoryWarning) {
                 long timeDif = System.currentTimeMillis() - ms;
-                if (timeDif > 60 * 3 * 1000 && Runtime.getRuntime().totalMemory() / (double) maxMem > 0.95) { // if
+                if (timeDif > 60 * 3 * 1000 && Runtime.getRuntime().totalMemory() / (double) maxMem > 1.95) { // if
                     JByteMod.LOGGER.logNotification(JByteMod.res.getResource("memory_full"));
                     publish(100);
                     this.cancel(true);
@@ -200,7 +201,7 @@ public class LoadTask extends SwingWorker<Void, Integer> {
     @Override
     protected void done() {
         JByteMod.lastEditFile = file.getName();
-        Discord.updatePresence("Working on " + file.getName(), "Idle ...");
+        Discord.updatePresence("Working on " + file.getName(), CustomRPC.customStatus);
         JByteMod.LOGGER.log("Successfully loaded file!");
         jbm.refreshTree();
         JByteMod.LOGGER.log("Tree refreshed.");

@@ -7,12 +7,14 @@ import com.alee.extended.breadcrumb.WebBreadcrumbToggleButton;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import com.alee.utils.SwingUtils;
+import me.grax.jbytemod.CustomRPC;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.discord.Discord;
 import me.grax.jbytemod.ui.graph.ControlFlowPanel;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -135,7 +137,14 @@ public class MyEditorTab extends JPanel {
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
 
-        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
+        // Se ele for custom, continuar o custom status.
+        if (CustomRPC.isCustom) {
+            Discord.updateCustomState(CustomRPC.customStatus);
+        }
+        if (!CustomRPC.isCustom) {
+            Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
+        }
+
         // Discord.currentDecompiler = "test!!!";
         // Discord.updateDecompiler(Discord.currentDecompiler);
         if (decompilerBtn.isSelected()) {
@@ -151,8 +160,8 @@ public class MyEditorTab extends JPanel {
         String regexed = cn.name.toString();
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
-
         Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class on " + mn.name + " method");
+
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, mn, false);
         }

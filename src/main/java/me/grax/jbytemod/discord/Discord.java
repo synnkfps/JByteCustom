@@ -27,7 +27,7 @@ public class Discord {
         handlers.ready = (user) -> JByteMod.LOGGER.log("Discord is now ready.");
         discordRPC.Discord_Initialize(applicationId, handlers, true, "");
         startTimestamp = System.currentTimeMillis();
-        updatePresence("Idling.", "");
+        updatePresence("", "Idle...");
         updateDecompiler(currentDecompiler);
     }
 
@@ -48,14 +48,19 @@ public class Discord {
         /**
          * @TODO: IF USER IS USING KOFFEE, CHANGE smallImageText TO DISASSEMBLER (INSTEAD OF DECOMPILER).
          */
-        if (decompilerUsed.equalsIgnoreCase("Koffee")) {
-            presence.smallImageText = "Using " + decompiler + " Disassembler";
-        }
         presence.smallImageText = "Using " + decompiler + " Decompiler";
         refresh();
     }
-
+    public static void updateCustomState(String state) {
+        presence.state = state;
+        refresh();
+    }
+    public static void keepDetails(String details) {
+        presence.details = details;
+        refresh();
+    }
     public static void refresh(){
         discordRPC.Discord_UpdatePresence(presence);
     }
+
 }
