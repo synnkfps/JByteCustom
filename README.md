@@ -34,7 +34,7 @@ How to use:
 
 
 ## Contributors
-- JohnShiozo (did the gradle support)
+- JohnShiozo (did the gradle support and updated libs)
 - storm772 (changed some things, like rpc, etc...)
 - GraxCode (original jbytemod dev)
 - UltraPanda
