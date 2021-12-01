@@ -55,7 +55,7 @@ dependencies {
 	include files('libs/weblaf-complete-1.29-fixed.jar')
 	include files('libs/weblookandfeel.jar')
     include "org.jetbrains.kotlin:kotlin-stdlib:1.6.0-RC2"
-    include "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.0-RC2"
+    include "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.0"
     include "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0-RC2"
 }
 
