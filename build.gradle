@@ -35,7 +35,7 @@ configurations {
 
 dependencies {
 	include 'commons-io:commons-io:2.8.0'
-	include 'com.fifesoft:rsyntaxtextarea:3.1.3'
+	include 'com.fifesoft:rsyntaxtextarea:3.1.6'
 	include 'club.minnced:java-discord-rpc:2.0.2'
 	include 'org.bitbucket.mstrobel:procyon-core:0.5.36'
 	include 'org.bitbucket.mstrobel:procyon-expressions:0.5.36'
