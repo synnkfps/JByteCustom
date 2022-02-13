@@ -45,7 +45,7 @@ dependencies {
 	include 'org.jfree:jfreechart:1.5.3'
 	include 'com.weblookandfeel:weblaf-ui:1.2.13'
 	include 'org.benf:cfr:0.152'
-	include 'commons-cli:commons-cli:1.4'
+	include 'commons-cli:commons-cli:1.5.0'
 	include 'org.apache.ant:ant:1.10.12'
 	include 'com.google.guava:guava:31.0.1-jre'
 	include 'com.google.code.gson:gson:2.8.9'
