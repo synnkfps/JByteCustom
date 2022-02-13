@@ -27,7 +27,7 @@ public class CustomRPC {
             Discord.presence.state = customStatus;
             Discord.refresh();
         }
-        if (isCustom == false){
+        if (!isCustom){
             Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
             Discord.refresh();
         }
