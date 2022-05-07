@@ -9,10 +9,10 @@ A fork of JByteMod-Reborn, with more updates. USES KOFFEE DISASSEMBLER!
 - Advanced Discord RPC
 
 ## INSTALLATION & BUILDING
-- Extract the .zip that you downloaded from github
-- Open the extracted folder
-- Open CMD (command prompt) on the folder (or linux terminal)
-- Do `gradlew build` (or `chmod +x gradlew` / `./gradlew build`)
+1. Extract the .zip that you downloaded from github
+2. Open the extracted folder
+3. Open CMD (command prompt) on the folder (or linux terminal)
+4. Do `gradlew build` (or `chmod +x gradlew` / `./gradlew build`)
 - After building, go to ../builds/libs and use the X-release.jar one.
 - Done!
 
