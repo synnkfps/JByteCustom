@@ -1,13 +1,5 @@
 # JByteCustom
-A fork of JByteMod-Reborn, with more updates. USES KOFFEE DECOMPILER!
-<br>
-***IF YOU WANT A VERSION WITH A SLIGHT DIFFERENCE, USE GHOST UPDATES (versions with b in the end)***<br>
-***THOSE VERSIONS WILL NOT CHANGE ANYTHING RELATED TO PERFORMANCE.***<br>
-***EXAMPLE:***
-- Version 1.1.2 don't have class Methods support in their RPC.
-- Version 1.1.2-b2 have class Methods support in their RPC.<br>
-<ins>*Nothing related to performance changed. That's how ghost updates will work.*</ins><br>
-*Note: ghost updates will NOT be added to releases. You will need to build yourself.*
+A fork of JByteMod-Reborn, with more updates. USES KOFFEE DISASSEMBLER!
 
 ## NOTES
 - Koffee Disassembler (VERY USEFUL FOR BYTECODE UNDERSTANDING)
