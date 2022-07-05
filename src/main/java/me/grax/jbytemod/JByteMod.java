@@ -50,7 +50,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class JByteMod extends JFrame {
-    public final static String version = "1.1.3";
+    public final static String version = "1.1.4";
     private static final String jbytemod = "JByteCustom v" + version;
 
     public static File workingDir = new File(".");
