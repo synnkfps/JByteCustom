@@ -9,10 +9,10 @@ public class RPCFrame extends JDialog {
 
     public static JLabel labelState = new JLabel("State: ");
     public static JLabel labelDetails = new JLabel("Details: ");
-    public static JTextField fieldState = new JTextField(20);
-    public static JTextField fieldDetails = new JTextField(20);
-    public static JCheckBox checker = new JCheckBox("Editable");
-    public static JCheckBox checkerTwo = new JCheckBox("Editable");
+
+    public static JTextField fieldState = new JTextField("State", 20);
+    public static JTextField fieldDetails = new JTextField("Details",20);
+
     public static JButton buttonLogin = new JButton("Apply");
 
 
@@ -24,6 +24,7 @@ public class RPCFrame extends JDialog {
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
+
 
         // details
         constraints.gridx = 0;
@@ -40,9 +41,11 @@ public class RPCFrame extends JDialog {
         newPanel.add(labelState, constraints);
 
         constraints.gridx = 1;
+        constraints.gridy = 1;
         newPanel.add(fieldState, constraints);
 
-        // button
+
+
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.gridwidth = 2;

@@ -33,10 +33,7 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 public class MyMenuBar extends JMenuBar {
 
     private static final Icon searchIcon = new ImageIcon(MyMenuBar.class.getResource("/resources/search.png"));
@@ -48,12 +45,14 @@ public class MyMenuBar extends JMenuBar {
     public static RPCFrame rpcFrame = new RPCFrame(jbm);
 
     public MyMenuBar(JByteMod jam, boolean agent) {
-        this.jbm = jam;
+        jbm = jam;
         this.agent = agent;
         this.initFileMenu();
         this.center = new JPanel();
         center.setLayout(new GridLayout());
     }
+
+
 
     private void initFileMenu() {
         JMenu file = new JMenu(JByteMod.res.getResource("file"));
@@ -69,36 +68,23 @@ public class MyMenuBar extends JMenuBar {
             });
             changeRPC.addActionListener(e->{
                 rpcFrame.setVisible(true);
-                boolean isCustom = CustomRPC.isCustom;
-                String regex = CustomRPC.reg;
-                final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
-                final Matcher matcher = pattern.matcher(regex);
 
                 RPCFrame.buttonLogin.addActionListener(new ActionListener() {
-
                     public void actionPerformed(ActionEvent e) {
-                        // state or details
+
+                        if (!RPCFrame.fieldState.getText().isEmpty()) {
+                            CustomRPC.state_text = RPCFrame.fieldState.getText(); // set state_text to the text box text
+                            Discord.updateCustomState(CustomRPC.state_text);
+                        } else {
+                            Discord.updateCustomState(CustomRPC.customStatus);
+                        }
                         if (!RPCFrame.fieldDetails.getText().isEmpty()) {
                             Discord.presence.details = RPCFrame.fieldDetails.getText();
                             Discord.refresh();
-                            JByteMod.LOGGER.log("Updated RPC Details to: " + RPCFrame.fieldDetails.getText());
                         } else {
-                            Discord.presence.details = CustomRPC.details_text;
-                            JByteMod.LOGGER.log("Updated RPC Details to: " + CustomRPC.details_text);
-                            Discord.refresh();
+                            Discord.updateCustomDetails(CustomRPC.customDetails);
                         }
-                        if (!RPCFrame.fieldState.getText().isEmpty()) {
-                            Discord.presence.state = RPCFrame.fieldState.getText();
-                            Discord.refresh();
-                            JByteMod.LOGGER.log("Updated RPC State to:" + RPCFrame.fieldState.getText());
-                        } else {
-                            Discord.presence.state = CustomRPC.state_text;
-                            Discord.refresh();
-                            JByteMod.LOGGER.log("Updated RPC State to:" + CustomRPC.state_text);
-                        }
-
                         rpcFrame.dispose();
-
                     }
                 });
             });

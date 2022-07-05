@@ -1,5 +1,7 @@
 package me.grax.jbytemod.ui;
 
+import club.minnced.discord.rpc.DiscordRPC;
+import club.minnced.discord.rpc.DiscordRichPresence;
 import com.alee.extended.breadcrumb.WebBreadcrumb;
 import com.alee.extended.breadcrumb.WebBreadcrumbToggleButton;
 import java.util.regex.Pattern;
@@ -12,6 +14,7 @@ import me.grax.jbytemod.ui.graph.ControlFlowPanel;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -29,13 +32,14 @@ public class MyEditorTab extends JPanel {
     private WebBreadcrumbToggleButton analysisBtn;
     private WebBreadcrumbToggleButton codeBtn;
     private boolean classSelected = false;
-
+    public static DiscordRPC discordRPC;
+    DiscordRichPresence presence = new DiscordRichPresence();
 
     public MyEditorTab(JByteMod jbm) {
         setLayout(new BorderLayout());
         this.center = new JPanel();
         center.setLayout(new GridLayout());
-        this.label = new JLabel("JByteCustom");
+        label = new JLabel("JByteCustom");
         this.codeEditor = new MyCodeEditor(jbm, label);
         jbm.setCodeList(codeEditor.getEditor());
         this.code = withBorder(label, codeEditor);
@@ -133,10 +137,12 @@ public class MyEditorTab extends JPanel {
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
 
-        // if is not custom and select class
-        CustomRPC.state_text = "Editing " + regexed.replaceAll(".+/", "") + ".class";
-        Discord.presence.state = CustomRPC.state_text;
-        Discord.refresh();
+        if (RPCFrame.fieldState.getText().isEmpty()) {
+            CustomRPC.customStatus = "Editing " + regexed.replaceAll(".+/", "") + ".class";
+
+            Discord.presence.state = CustomRPC.customStatus;
+            Discord.refresh();
+        }
 
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, null, false);
@@ -151,11 +157,12 @@ public class MyEditorTab extends JPanel {
         String regexed = cn.name.toString();
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
+        if (RPCFrame.fieldState.getText().isEmpty()) {
+            CustomRPC.customStatus = "Editing " + regexed.replaceAll(".+/", "") + ".class ("+mn.name+" method)";
 
-        CustomRPC.state_text = "Editing " + regexed.replaceAll(".+/", "") + ".class (" + mn.name + " method)";
-        Discord.presence.state = CustomRPC.state_text;
-        Discord.refresh();
-
+            Discord.presence.state = CustomRPC.customStatus;
+            Discord.refresh();
+        }
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, mn, false);
         }

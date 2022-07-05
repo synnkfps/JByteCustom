@@ -1,7 +1,7 @@
 package me.grax.jbytemod.decompiler;
 
 public enum Decompilers {
-    CFR("CFR", "v1.52"),
+    CFR("CFR", "v1.51"),
     PROCYON("Procyon", "v1.0"),
     FERNFLOWER("FernFlower", ""),
     KRAKATAU("Krakatau", "v502"),

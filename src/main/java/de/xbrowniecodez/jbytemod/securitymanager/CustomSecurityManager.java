@@ -1,9 +1,9 @@
 package de.xbrowniecodez.jbytemod.securitymanager;
 
+import me.grax.jbytemod.JByteMod;
+
 import java.net.SocketTimeoutException;
 import java.security.Permission;
-
-import me.grax.jbytemod.JByteMod;
 
 public class CustomSecurityManager extends SecurityManager{
 	public CustomSecurityManager() {
