@@ -3,15 +3,14 @@ package me.grax.jbytemod.ui;
 import me.grax.jbytemod.JByteMod;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class RPCFrame extends JDialog {
 
-    public static JLabel labelUsername = new JLabel("State: ");
-    public static JLabel labelPassword = new JLabel("Details: ");
-    public static JTextField fieldUsername = new JTextField(20);
+    public static JLabel labelState = new JLabel("State: ");
+    public static JLabel labelDetails = new JLabel("Details: ");
+    public static JTextField fieldState = new JTextField(20);
+    public static JTextField fieldDetails = new JTextField(20);
     public static JCheckBox checker = new JCheckBox("Editable");
     public static JCheckBox checkerTwo = new JCheckBox("Editable");
     public static JButton buttonLogin = new JButton("Apply");
@@ -26,16 +25,26 @@ public class RPCFrame extends JDialog {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
 
-        // add components to the panel
+        // details
         constraints.gridx = 0;
         constraints.gridy = 0;
-        newPanel.add(labelUsername, constraints);
+        newPanel.add(labelDetails, constraints);
 
         constraints.gridx = 1;
-        newPanel.add(fieldUsername, constraints);
+        constraints.gridy = 0;
+        newPanel.add(fieldDetails, constraints);
 
+        // state
         constraints.gridx = 0;
         constraints.gridy = 1;
+        newPanel.add(labelState, constraints);
+
+        constraints.gridx = 1;
+        newPanel.add(fieldState, constraints);
+
+        // button
+        constraints.gridx = 0;
+        constraints.gridy = 2;
         constraints.gridwidth = 2;
         constraints.anchor = GridBagConstraints.CENTER;
         newPanel.add(buttonLogin, constraints);
