@@ -5,16 +5,14 @@ import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.decompiler.Decompilers;
-import me.grax.jbytemod.ui.DecompilerPanel;
-import me.grax.jbytemod.ui.DecompilerTab;
 
 import javax.swing.*;
 
 public class Discord {
     public static DiscordRPC discordRPC;
     public static long startTimestamp;
-    private static final JComboBox<Decompilers> decompilerCombo = new JComboBox<Decompilers>(Decompilers.values());;
-    private static Decompilers decompiler = (Decompilers) decompilerCombo.getSelectedItem();
+    private static final JComboBox<Decompilers> decompilerCombo = new JComboBox<Decompilers>(Decompilers.values());
+    private static final Decompilers decompiler = (Decompilers) decompilerCombo.getSelectedItem();
     public static String decompilerUsed = decompiler.toString();
     public static DiscordRichPresence presence = new DiscordRichPresence();
     public static int shittySystem;
@@ -29,18 +27,20 @@ public class Discord {
         startTimestamp = System.currentTimeMillis();
         updatePresence("", "Idle...");
         updateDecompiler(currentDecompiler);
+
     }
 
+    // updatePresence() should be called to only reupdate everything.
     public static void updatePresence(String details, String state) {
         presence.details = details;
+        presence.state = state;
+
         presence.largeImageKey = "big";
         presence.largeImageText = "Java " + System.getProperty("java.version");
         presence.joinSecret = "java";
         presence.smallImageKey = "decompiler";
         presence.startTimestamp = startTimestamp;
-        if (!state.equals("") && JByteMod.ops.get("discord_state").getBoolean()) {
-            presence.state = state;
-        }
+
         discordRPC.Discord_UpdatePresence(presence);
     }
 
@@ -51,11 +51,13 @@ public class Discord {
         presence.smallImageText = "Using " + decompiler + " Decompiler";
         refresh();
     }
+
     public static void updateCustomState(String state) {
         presence.state = state;
         refresh();
+
     }
-    public static void keepDetails(String details) {
+    public static void updateCustomDetails(String details) {
         presence.details = details;
         refresh();
     }
