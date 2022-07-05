@@ -7,8 +7,9 @@ public enum Decompilers {
     KRAKATAU("Krakatau", "v502"),
     KOFFEE("Koffee", "");
 
-    private String version;
-    private String name;
+
+    private final String version;
+    private final String name;
 
     Decompilers(String name, String version) {
         this.name = name;

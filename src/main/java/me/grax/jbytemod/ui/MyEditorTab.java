@@ -6,7 +6,11 @@ import com.alee.extended.breadcrumb.WebBreadcrumb;
 import com.alee.extended.breadcrumb.WebBreadcrumbToggleButton;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import com.alee.extended.svg.SvgIconSource;
 import com.alee.utils.SwingUtils;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.icons.FlatSearchIcon;
 import me.grax.jbytemod.CustomRPC;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.discord.Discord;
@@ -43,7 +47,6 @@ public class MyEditorTab extends JPanel {
         this.codeEditor = new MyCodeEditor(jbm, label);
         jbm.setCodeList(codeEditor.getEditor());
         this.code = withBorder(label, codeEditor);
-
         InfoPanel sp = new InfoPanel(jbm);
         jbm.setSP(sp);
 
@@ -54,7 +57,6 @@ public class MyEditorTab extends JPanel {
         jbm.setCFP(this.analysis = new ControlFlowPanel(jbm));
 
         center.add(code);
-
         WebBreadcrumb selector = new WebBreadcrumb(true);
         codeBtn = new WebBreadcrumbToggleButton("Code");
         codeBtn.setSelected(true);

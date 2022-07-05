@@ -2,6 +2,10 @@ package me.grax.jbytemod.ui;
 
 import com.alee.global.StyleConstants;
 import com.alee.laf.button.WebButton;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
+import com.formdev.flatlaf.icons.FlatSearchIcon;
+import com.formdev.flatlaf.ui.FlatButtonUI;
 import me.grax.jbytemod.JByteMod;
 
 import javax.swing.*;
@@ -9,7 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class MyToolBar extends JToolBar {
-    private MyMenuBar menubar;
+    private final MyMenuBar menubar;
 
     public MyToolBar(JByteMod jbm) {
         this.menubar = (MyMenuBar) jbm.getJMenuBar();
@@ -34,9 +38,11 @@ public class MyToolBar extends JToolBar {
             }));
         }
         this.addSeparator();
+        this.setBorderPainted(false);
         this.add(makeNavigationButton(JByteMod.res.getResource("search"), getIcon("search"), e -> {
             menubar.searchLDC();
         }));
+
         this.addSeparator();
         this.add(makeNavigationButton("Access Helper", getIcon("table"), e -> {
             new JAccessHelper().setVisible(true);
@@ -55,8 +61,8 @@ public class MyToolBar extends JToolBar {
         button.setToolTipText(action);
         button.addActionListener(a);
         button.setFocusable(false);
-        button.setBorderPainted(false);
-        button.setRolloverEnabled(false);
+        button.setBorderPainted(true);
+        button.setRolloverEnabled(true);
         return button;
     }
 }

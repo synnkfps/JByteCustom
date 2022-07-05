@@ -1,6 +1,6 @@
 package me.grax.jbytemod.utils.gui;
 
-import com.alee.laf.list.WebListUI;
+import com.formdev.flatlaf.ui.FlatListUI;
 
 import javax.swing.*;
 import javax.swing.plaf.ListUI;
@@ -20,10 +20,9 @@ public class SwingUtils {
 
     public static void disableSelection(JList<?> jl) {
         ListUI ui = (ListUI) jl.getUI();
-        if (ui instanceof WebListUI) {
-            WebListUI wlui = (WebListUI) ui;
-            wlui.setHighlightRolloverCell(false);
-            wlui.setDecorateSelection(false);
+
+        if (ui instanceof FlatListUI) {
+            FlatListUI flui = (FlatListUI) ui;
         }
 
     }

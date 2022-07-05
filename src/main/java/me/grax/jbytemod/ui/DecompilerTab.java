@@ -24,8 +24,6 @@ import java.util.zip.ZipInputStream;
 public class DecompilerTab extends JPanel {
     private static final File tempDir = new File(System.getProperty("java.io.tmpdir"));
     private static final File userDir = new File(System.getProperty("user.dir"));
-    public static DiscordRPC discordRPC;
-    DiscordRichPresence presence = new DiscordRichPresence();
     public static String decomp = null;
     public static Decompilers decompiler = Decompilers.CFR;
     public static DecompilerPanel dp;
@@ -153,7 +151,4 @@ public class DecompilerTab extends JPanel {
         d.start();
     }
 
-    public void compile(ClassNode cn, MethodNode mn) {
-
-    }
 }

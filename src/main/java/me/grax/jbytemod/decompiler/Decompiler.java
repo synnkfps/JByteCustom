@@ -6,6 +6,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.Arrays;
+
 public abstract class Decompiler extends Thread {
     /**
      * Do not reload if we already know the output
@@ -45,8 +47,10 @@ public abstract class Decompiler extends Thread {
     }
 
     protected String decompile(ClassNode cn, MethodNode mn) {
-        if (last != null && cn.equals(last)
-                && ((lastMn == null && mn == null) || (mn != null && lastMn != null && mn.equals(lastMn)))) {
+        if (cn.equals(last)
+                && ((lastMn == null && mn == null)
+                || (mn != null
+                && mn.equals(lastMn)))) {
             // same node, same output
             return lastOutput;
         }
@@ -58,10 +62,11 @@ public abstract class Decompiler extends Thread {
         try{
             return decompile(cw.toByteArray(), mn);
         }catch(Exception exception){
-            return "Failed to decompile, reason: " + exception.getMessage();
+            return "Failed to decompile, reason: " + exception + "\n" + Arrays.toString(exception.getStackTrace())+ "\n" + exception.getMessage();
         }
 
     }
 
     public abstract String decompile(byte[] b, MethodNode mn);
+
 }

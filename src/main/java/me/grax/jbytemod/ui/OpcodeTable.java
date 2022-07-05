@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class OpcodeTable extends JEditorPane {
     public OpcodeTable() {
-        this.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
+        this.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         this.setEditable(false);
         this.setContentType("text/html");
         this.setText(loadTable());

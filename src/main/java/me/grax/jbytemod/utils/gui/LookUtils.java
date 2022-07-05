@@ -1,6 +1,6 @@
 package me.grax.jbytemod.utils.gui;
 
-import com.alee.laf.WebLookAndFeel;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.utils.ThemeChanges;
 
@@ -10,20 +10,8 @@ public class LookUtils {
     public static void setLAF() {
         try {
             JByteMod.LOGGER.log("Setting default Look and Feel");
-            if (JByteMod.ops.get("use_flatdark").getBoolean()) {
-                if (changeLAF("com.formdev.flatlaf.FlatDarkLaf")) {
-                    return;
-                }
-            }
+            FlatIntelliJLaf.setup();
 
-            if (JByteMod.ops.get("use_weblaf").getBoolean()) {
-                WebLookAndFeel.install();
-            } else {
-                if (!changeLAF("javax.swing.plaf.nimbus.NimbusLookAndFeel")) {
-                    JByteMod.LOGGER.err("Failed to set Nimbus Look and Feel, trying to use WebLaF");
-                    WebLookAndFeel.install();
-                }
-            }
         } catch (Throwable t) {
             t.printStackTrace();
             JByteMod.LOGGER.err("Failed to set Look and Feel");

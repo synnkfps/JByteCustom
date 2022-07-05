@@ -1,20 +1,31 @@
 package me.grax.jbytemod.ui;
 
 import com.alee.extended.statusbar.WebMemoryBar;
+import com.alee.laf.WebLookAndFeel;
+import com.formdev.flatlaf.ui.FlatProgressBarUI;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static com.alee.managers.language.data.TooltipType.weblaf;
 
 public class PageEndPanel extends JPanel {
 
-    private static final String copyright = "\u00A9 JByteCustom - 2021 ";
-    private JProgressBar pb;
-    private JLabel percent;
-    private JLabel label;
+    private static final String copyright = "\u00A9 JByteCustom - 2022 ";
+    private final JProgressBar pb;
+    private final JLabel percent;
+    private final JLabel label;
     private WebMemoryBar memoryBar;
+    Runtime instance = Runtime.getRuntime();
 
-    public PageEndPanel() {
+
+    public PageEndPanel() throws InterruptedException {
         this.pb = new JProgressBar() {
             @Override
             public void setValue(int n) {
@@ -27,18 +38,37 @@ public class PageEndPanel extends JPanel {
                 }
             }
         };
+
+
         this.setLayout(new GridLayout(1, 4, 10, 10));
         this.setBorder(new EmptyBorder(3, 0, 0, 0));
+
         this.add(pb);
         this.add(percent = new JLabel());
         percent.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
         label = new JLabel(copyright);
+
         label.setHorizontalAlignment(SwingConstants.RIGHT);
         label.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
         this.add(label);
-        memoryBar = new WebMemoryBar();
-        memoryBar.setShowMaximumMemory(true); // More memory. Preventing crash due memory extrapolation.
-        this.add(memoryBar);
+
+        JProgressBar pgb = new JProgressBar();
+        this.add(pgb);
+
+        int mb = 1048576;
+
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        pgb.setMaximum((int) (instance.maxMemory()) / 1000000); // 1700-1900 (gradle.properties)
+        pgb.setStringPainted(true);
+        pgb.setBorderPainted(true);
+        ses.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                pgb.setValue((int)((instance.totalMemory() - instance.freeMemory()))/1000000);
+                pgb.setName("" + (int)((instance.totalMemory() - instance.freeMemory()))/1000000);
+            }
+        }, 0, 1, TimeUnit.MILLISECONDS);
+
 
     }
 
@@ -50,6 +80,7 @@ public class PageEndPanel extends JPanel {
             }
         });
     }
+
 
     public void setTip(String s) {
         if (s != null) {

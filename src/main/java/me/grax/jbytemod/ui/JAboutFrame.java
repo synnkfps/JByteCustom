@@ -1,5 +1,8 @@
 package me.grax.jbytemod.ui;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.ui.FlatButtonBorder;
 import me.grax.jbytemod.JByteMod;
 import me.grax.jbytemod.utils.TextUtils;
 
@@ -34,9 +37,10 @@ public class JAboutFrame extends JDialog {
         cp.add(jp, BorderLayout.PAGE_END);
 
         JTextPane title = new JTextPane();
+        Font font = new Font("Segoe UI", Font.PLAIN, 12);
         title.setContentType("text/html");
-        title.setText(TextUtils.toHtml(jbm.getTitle()
-                + "<br/>Copyright \u00A9 2016-2018 noverify<br/><br/>Copyright \u00A9 2019 Panda<br/><br/>Copyright \u00A9 2020 xBrownieCodez<br/><br/>JByteMod by noverify, Reborn by Panda, Remastered by xBrownieCodez<br/><font color=\"#0000EE\"><u>https://github.com/GraxCode/JByteMod-Beta</u></font><br/>Donate LTC: <font color=\"#333333\">LhwXLVASzb6t4vHSssA9FQwq2X5gAg8EKX</font>"));
+        title.setFont(font);
+        title.setText(TextUtils.toLight("JByteCustom " + JByteMod.version + " - by SynnK & JohnShiozo") + "<br>Reborn by Panda,<br> Remastered by xBrownieCodez,<br> Customized by " + TextUtils.toBold("SynnK") + ", libs containment by JohnShiozo<br>");
         UIDefaults defaults = new UIDefaults();
         defaults.put("TextPane[Enabled].backgroundPainter", this.getBackground());
         title.putClientProperty("Nimbus.Overrides", defaults);

@@ -1,5 +1,8 @@
 package me.grax.jbytemod;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.sun.tools.attach.VirtualMachine;
 import de.xbrowniecodez.jbytemod.securitymanager.CustomSecurityManager;
 import de.xbrowniecodez.jbytemod.utils.UpdateChecker;
@@ -114,7 +117,6 @@ public class JByteMod extends JFrame {
                 }
             }
         });
-        border = UIManager.getColor("nimbusBorder");
         if (border == null) {
             border = new Color(146, 151, 161);
         }
@@ -129,10 +131,7 @@ public class JByteMod extends JFrame {
         this.setTCBList(new TCBList());
         this.setLVPList(new LVPList());
         JPanel border = new JPanel();
-        if (!UIManager.getLookAndFeel().getName().equals("WebLookAndFeel")) {
-            //looks better without border for weblaf
-            border.setBorder(new LineBorder(JByteMod.border));
-        }
+
         border.setLayout(new GridLayout());
         JSplitPane splitPane = new MySplitPane(this, jarTree);
         JPanel b2 = new JPanel();

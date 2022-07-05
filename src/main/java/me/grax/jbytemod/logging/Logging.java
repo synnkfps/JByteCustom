@@ -60,23 +60,12 @@ public class Logging extends PrintStream {
 
     private static class GuiLogging extends Thread {
 
-        private String text;
+        private final String text;
 
         public GuiLogging(String text) {
             this.text = text;
         }
 
-        @Override
-        public void run() {
-            JByteMod inst = JByteMod.instance;
-            if (inst != null) {
-                inst.getPP().setTip(text);
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                }
-                inst.getPP().setTip(null);
-            }
-        }
+
     }
 }

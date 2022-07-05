@@ -14,8 +14,8 @@ public class DecompilerPanel extends RSyntaxTextArea {
         this.setSyntaxEditingStyle("text/java");
         this.setCodeFoldingEnabled(true);
         this.setAntiAliasingEnabled(true);
-        this.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        this.setEditable(false);
+        this.setFont(new Font("Arial", Font.PLAIN, 12));
+        this.setEditable(true);
         // change theme to java
         try {
             Theme theme;
