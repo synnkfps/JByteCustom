@@ -6,6 +6,7 @@ import me.grax.jbytemod.JarArchive;
 import me.grax.jbytemod.discord.Discord;
 import me.grax.jbytemod.scanner.ScannerThread;
 import me.grax.jbytemod.ui.PageEndPanel;
+import me.grax.jbytemod.ui.RPCFrame;
 import me.grax.jbytemod.utils.ErrorDisplay;
 import me.grax.jbytemod.utils.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.grax.jbytemod.CustomRPC.isCustom;
 import static org.objectweb.asm.ClassReader.SKIP_CODE;
 import static org.objectweb.asm.ClassReader.SKIP_DEBUG;
 
@@ -193,7 +195,12 @@ public class LoadTask extends SwingWorker<Void, Integer> {
     @Override
     protected void process(List<Integer> chunks) {
         int i = chunks.get(chunks.size() - 1);
-        Discord.updatePresence("Loading " + file.getName() + " (" + i + "%)", "");
+        if (!isCustom) {
+            Discord.updateCustomDetails("(" + i + "%) Loading " + file.getName());
+        } else {
+            Discord.updateCustomDetails(CustomRPC.details_text);
+        }
+
         jpb.setValue(i);
         super.process(chunks);
     }
@@ -201,7 +208,10 @@ public class LoadTask extends SwingWorker<Void, Integer> {
     @Override
     protected void done() {
         JByteMod.lastEditFile = file.getName();
-        Discord.updatePresence("Working on " + file.getName(), CustomRPC.customStatus);
+        CustomRPC.details_text = "Working on " + file.getName();
+        Discord.presence.details = CustomRPC.details_text;
+        Discord.refresh();
+        JByteMod.LOGGER.log("Setted RPC to the file name.");
         JByteMod.LOGGER.log("Successfully loaded file!");
         jbm.refreshTree();
         JByteMod.LOGGER.log("Tree refreshed.");
