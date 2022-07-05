@@ -1,14 +1,14 @@
 # JByteCustom
 A fork of JByteMod-Reborn, with more updates. USES KOFFEE DISASSEMBLER!
 
-## NOTES
+## Features
 - Koffee Disassembler (VERY USEFUL FOR BYTECODE UNDERSTANDING)
 - Up-to-date Decompilers.
 - Up-to-date Libs
 - Best settings by default
 - Advanced Discord RPC
 
-## INSTALLATION & BUILDING
+## Installation & Building
 1. Extract the .zip that you downloaded from github
 2. Open the extracted folder
 3. Open CMD (command prompt) on the folder (or linux terminal)
