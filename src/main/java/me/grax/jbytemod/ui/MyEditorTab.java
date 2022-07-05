@@ -1,7 +1,5 @@
 package me.grax.jbytemod.ui;
 
-import club.minnced.discord.rpc.DiscordRPC;
-import club.minnced.discord.rpc.DiscordRichPresence;
 import com.alee.extended.breadcrumb.WebBreadcrumb;
 import com.alee.extended.breadcrumb.WebBreadcrumbToggleButton;
 import java.util.regex.Pattern;
@@ -14,7 +12,6 @@ import me.grax.jbytemod.ui.graph.ControlFlowPanel;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -32,8 +29,7 @@ public class MyEditorTab extends JPanel {
     private WebBreadcrumbToggleButton analysisBtn;
     private WebBreadcrumbToggleButton codeBtn;
     private boolean classSelected = false;
-    public static DiscordRPC discordRPC;
-    DiscordRichPresence presence = new DiscordRichPresence();
+
 
     public MyEditorTab(JByteMod jbm) {
         setLayout(new BorderLayout());
@@ -137,16 +133,11 @@ public class MyEditorTab extends JPanel {
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
 
-        // Se ele for custom, continuar o custom status.
-        if (CustomRPC.isCustom) {
-            Discord.updateCustomState(CustomRPC.customStatus);
-        }
-        if (!CustomRPC.isCustom) {
-            Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
-        }
+        // if is not custom and select class
+        CustomRPC.state_text = "Editing " + regexed.replaceAll(".+/", "") + ".class";
+        Discord.presence.state = CustomRPC.state_text;
+        Discord.refresh();
 
-        // Discord.currentDecompiler = "test!!!";
-        // Discord.updateDecompiler(Discord.currentDecompiler);
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, null, false);
         }
@@ -160,7 +151,10 @@ public class MyEditorTab extends JPanel {
         String regexed = cn.name.toString();
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
-        Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class on " + mn.name + " method");
+
+        CustomRPC.state_text = "Editing " + regexed.replaceAll(".+/", "") + ".class (" + mn.name + " method)";
+        Discord.presence.state = CustomRPC.state_text;
+        Discord.refresh();
 
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, mn, false);
