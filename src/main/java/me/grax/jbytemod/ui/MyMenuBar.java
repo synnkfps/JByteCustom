@@ -33,7 +33,10 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 public class MyMenuBar extends JMenuBar {
 
     private static final Icon searchIcon = new ImageIcon(MyMenuBar.class.getResource("/resources/search.png"));
@@ -52,8 +55,6 @@ public class MyMenuBar extends JMenuBar {
         center.setLayout(new GridLayout());
     }
 
-
-
     private void initFileMenu() {
         JMenu file = new JMenu(JByteMod.res.getResource("file"));
         if (!agent) {
@@ -68,21 +69,36 @@ public class MyMenuBar extends JMenuBar {
             });
             changeRPC.addActionListener(e->{
                 rpcFrame.setVisible(true);
+                boolean isCustom = CustomRPC.isCustom;
+                String regex = CustomRPC.reg;
+                final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
+                final Matcher matcher = pattern.matcher(regex);
 
                 RPCFrame.buttonLogin.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
-                        // Se o RPC State do RPCFrame estiver vazio, é porque ele vai ser vanilla
-                        if (RPCFrame.fieldUsername.getText().equalsIgnoreCase("")) {
-                            CustomRPC.isCustom = false;
+                        // state or details
+                        if (!RPCFrame.fieldDetails.getText().isEmpty()) {
+                            Discord.presence.details = RPCFrame.fieldDetails.getText();
                             Discord.refresh();
-                        // Se o RPC for custom (ou seja, o state não estiver vazio;
-                        } else if (!RPCFrame.fieldUsername.getText().equalsIgnoreCase("")) {
-                            CustomRPC.isCustom = true;
-                            CustomRPC.customStatus = RPCFrame.fieldUsername.getText(); // mudar o customstatus para o custom state
-                            Discord.updateCustomState(RPCFrame.fieldUsername.getText()); // dar update no status
+                            JByteMod.LOGGER.log("Updated RPC Details to: " + RPCFrame.fieldDetails.getText());
+                        } else {
+                            Discord.presence.details = CustomRPC.details_text;
+                            JByteMod.LOGGER.log("Updated RPC Details to: " + CustomRPC.details_text);
+                            Discord.refresh();
                         }
-                        rpcFrame.setVisible(false);
-                        // se ele não estiver usando: fazer com que seja o rpc normal
+                        if (!RPCFrame.fieldState.getText().isEmpty()) {
+                            Discord.presence.state = RPCFrame.fieldState.getText();
+                            Discord.refresh();
+                            JByteMod.LOGGER.log("Updated RPC State to:" + RPCFrame.fieldState.getText());
+                        } else {
+                            Discord.presence.state = CustomRPC.state_text;
+                            Discord.refresh();
+                            JByteMod.LOGGER.log("Updated RPC State to:" + CustomRPC.state_text);
+                        }
+
+                        rpcFrame.dispose();
+
                     }
                 });
             });
