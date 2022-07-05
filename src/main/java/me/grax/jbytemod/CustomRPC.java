@@ -10,25 +10,33 @@ import java.util.regex.Pattern;
 public class CustomRPC {
     public static boolean isCustom;
     public static String customStatus;
-    public static boolean checkIfStillTheSame;
-    public static boolean isVanilla;
+    public static String details_text = "";
+    public static String state_text = "";
+    public static String details_default = "Working on" + JByteMod.lastEditFile;
+    public static String reg = "";
 
     static {
-        customStatus = "Idle";
+        customStatus = "Idle...";
     }
 
     public static void checkIfIsCustom(ClassNode cn) {
-        String regexed = cn.name.toString();
+        String regex = cn.name.toString();
+        reg = regex;
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
-        final Matcher matcher = pattern.matcher(regexed);
+        final Matcher matcher = pattern.matcher(regex);
 
-        if (isCustom && !RPCFrame.fieldUsername.getText().isEmpty()) {
-            customStatus = RPCFrame.fieldUsername.getName();
-            Discord.presence.state = customStatus;
+        if (isCustom && !RPCFrame.fieldState.getText().isEmpty()) {
+            Discord.presence.state = RPCFrame.fieldState.getName();
             Discord.refresh();
         }
+
+        if (isCustom && !RPCFrame.fieldDetails.getText().isEmpty()) {
+            Discord.presence.details = RPCFrame.fieldDetails.getName();
+            Discord.refresh();
+        }
+
         if (!isCustom){
-            Discord.updatePresence("Working on " + JByteMod.lastEditFile, "Editing " + regexed.replaceAll(".+/", "") + ".class");
+            Discord.updatePresence("Working on" + JByteMod.lastEditFile, "Editing " + regex.replaceAll(".+/", "") + ".class");
             Discord.refresh();
         }
 
