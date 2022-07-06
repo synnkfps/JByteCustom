@@ -1,0 +1,94 @@
+package me.synnk.jbytecustom.utils.task.search;
+
+import me.synnk.jbytecustom.JByteCustom;
+import me.synnk.jbytecustom.ui.PageEndPanel;
+import me.synnk.jbytecustom.ui.lists.SearchList;
+import me.synnk.jbytecustom.ui.lists.entries.SearchEntry;
+import me.synnk.jbytecustom.utils.list.LazyListModel;
+import org.objectweb.asm.tree.*;
+
+import javax.swing.*;
+import java.util.Collection;
+import java.util.List;
+
+public class ReferenceTask extends SwingWorker<Void, Integer> {
+
+    private SearchList sl;
+    private PageEndPanel jpb;
+    private JByteCustom jbm;
+    private boolean exact;
+    private String owner;
+    private String name;
+    private String desc;
+    private boolean field;
+
+    public ReferenceTask(SearchList sl, JByteCustom jbm, String owner, String name, String desc, boolean exact, boolean field) {
+        this.sl = sl;
+        this.jbm = jbm;
+        this.jpb = jbm.getPP();
+        this.exact = exact;
+        this.owner = owner;
+        this.name = name;
+        this.desc = desc;
+        this.field = field;
+    }
+
+    @Override
+    protected Void doInBackground() throws Exception {
+        LazyListModel<SearchEntry> model = new LazyListModel<SearchEntry>();
+        Collection<ClassNode> values = jbm.getFile().getClasses().values();
+        double size = values.size();
+        double i = 0;
+        boolean exact = this.exact;
+        for (ClassNode cn : values) {
+            for (MethodNode mn : cn.methods) {
+                for (AbstractInsnNode ain : mn.instructions) {
+                    if (field) {
+                        if (ain.getType() == AbstractInsnNode.FIELD_INSN) {
+                            FieldInsnNode fin = (FieldInsnNode) ain;
+                            if (exact) {
+                                if (fin.owner.equals(owner) && fin.name.equals(name) && fin.desc.equals(desc)) {
+                                    model.addElement(new SearchEntry(cn, mn, fin));
+                                }
+                            } else {
+                                if (fin.owner.contains(owner) && fin.name.contains(name) && fin.desc.contains(desc)) {
+                                    model.addElement(new SearchEntry(cn, mn, fin));
+                                }
+                            }
+                        }
+                    } else {
+                        if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
+                            MethodInsnNode min = (MethodInsnNode) ain;
+                            if (exact) {
+                                if (min.owner.equals(owner) && min.name.equals(name) && min.desc.equals(desc)) {
+                                    model.addElement(new SearchEntry(cn, mn, min));
+                                }
+                            } else {
+                                if (min.owner.contains(owner) && min.name.contains(name) && min.desc.contains(desc)) {
+                                    model.addElement(new SearchEntry(cn, mn, min));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            publish(Math.min((int) (i++ / size * 100d) + 1, 100));
+        }
+        sl.setModel(model);
+        publish(100);
+        return null;
+    }
+
+    @Override
+    protected void process(List<Integer> chunks) {
+        int i = chunks.get(chunks.size() - 1);
+        jpb.setValue(i);
+        super.process(chunks);
+    }
+
+    @Override
+    protected void done() {
+        jpb.setValue(100);
+        JByteCustom.LOGGER.log("Search finished!");
+    }
+}

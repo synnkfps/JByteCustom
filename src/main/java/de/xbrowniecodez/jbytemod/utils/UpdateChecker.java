@@ -12,11 +12,11 @@ import javax.swing.JOptionPane;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.grax.jbytemod.JByteMod;
+import me.synnk.jbytecustom.JByteCustom;
 
 public class UpdateChecker {
 	public UpdateChecker() throws Exception {
-		JByteMod.LOGGER.log("Checking for updates...");
+		JByteCustom.LOGGER.log("Checking for updates...");
 		String sURL = "https://api.github.com/repos/xBrownieCodezV2/JByteMod-Remastered/releases/latest"; 																										// string
 		URL url = new URL(sURL);
 		URLConnection request = url.openConnection();
@@ -25,7 +25,7 @@ public class UpdateChecker {
 		JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
 		JsonObject rootobj = root.getAsJsonObject();
 		String version = rootobj.get("name").getAsString();
-		if (!version.equals(JByteMod.version)) {
+		if (!version.equals(JByteCustom.version)) {
 			int buttonComponent = JOptionPane.YES_NO_OPTION;
 			int result = JOptionPane.showConfirmDialog(null,
 					String.format("Version %s is available, would you like to download it?", version),

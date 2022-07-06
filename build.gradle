@@ -1,8 +1,6 @@
 plugins {
-	id 'com.github.johnrengelman.shadow' version '7.1.0'
     id "org.jetbrains.kotlin.jvm" version "1.6.0-RC2"
     id "java"
-    id "idea"
 }
 
 version = "${project_Version}"
@@ -10,94 +8,60 @@ group = "${project_Group}"
 archivesBaseName = project_BaseName
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
-compileJava.options.encoding = "UTF-8"
-
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+tasks.withType(JavaCompile)*.options*.encoding = 'UTF-8'
 
 repositories {
-	mavenCentral()
-    maven {
-        url 'https://repo1.maven.org/maven2/'
-        metadataSources {
-             artifact() //Look directly for artifact
-        }
-    }
-    maven { url = "https://jitpack.io/" }
-    maven { url = "https://jcenter.bintray.com/" }
+    mavenCentral()
+    maven { url "https://jitpack.io/" }
+    maven { url "https://jcenter.bintray.com/" }
 }
 
 configurations {
     include
-    implementation.extendsFrom(include)
+    implementation.extendsFrom include
 }
 
 dependencies {
-	implementation 'org.testng:testng:7.1.0'
-    implementation 'org.testng:testng:7.1.0'
-    include 'commons-io:commons-io:2.8.0'
-	include 'com.fifesoft:rsyntaxtextarea:3.1.3'
-	include 'club.minnced:java-discord-rpc:2.0.2'
-	include 'org.bitbucket.mstrobel:procyon-core:0.5.36'
-	include 'org.bitbucket.mstrobel:procyon-expressions:0.5.36'
-	include 'org.bitbucket.mstrobel:procyon-reflection:0.5.36'
-	include 'org.bitbucket.mstrobel:procyon-compilertools:0.5.36'
-	include 'org.tinyjee.jgraphx:jgraphx:3.4.1.3'
-	include 'org.jfree:jfreechart:1.5.3'
-	include 'com.weblookandfeel:weblaf-ui:1.2.13'
-	include 'org.benf:cfr:0.152'
-	include 'commons-cli:commons-cli:1.4'
-	include 'org.apache.ant:ant:1.10.12'
-	include 'com.google.guava:guava:31.0.1-jre'
-	include 'com.google.code.gson:gson:2.8.9'
-	include 'net.java.dev.jna:jna:5.9.0'
-	include 'com.formdev:flatlaf:1.6.1'
-	include files('libs/attach-1.7.jar')
-	include files('libs/weblaf-complete-1.29-fixed.jar')
-	include files('libs/weblookandfeel.jar')
-    include "org.jetbrains.kotlin:kotlin-stdlib:1.6.0-RC2"
-    include "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.0-RC2"
-    include "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0-RC2"
+    include 'commons-io:commons-io:2.11.0'
+    include 'commons-cli:commons-cli:1.5.0'
+
+    include 'com.fifesoft:rsyntaxtextarea:3.2.0'
+    include 'club.minnced:java-discord-rpc:2.0.2'
+    include 'org.bitbucket.mstrobel:procyon-core:0.6.0'
+    include 'org.bitbucket.mstrobel:procyon-expressions:0.6.0'
+    include 'org.bitbucket.mstrobel:procyon-reflection:0.6.0'
+    include 'org.bitbucket.mstrobel:procyon-compilertools:0.6.0'
+    include 'org.tinyjee.jgraphx:jgraphx:3.4.1.3'
+    include 'org.jfree:jfreechart:1.5.3'
+    include 'org.benf:cfr:0.152'
+    include 'org.apache.ant:ant:1.10.12'
+    include 'com.google.guava:guava:31.1-jre'
+    include 'com.google.code.gson:gson:2.9.0'
+    include 'net.java.dev.jna:jna:5.11.0'
+    include 'com.formdev:flatlaf:2.3'
+    include files('libs/attach-1.7.jar')
+    include files('libs/weblaf-complete-1.29-fixed.jar')
+
+    include 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0'
 }
 
-jar {
+task shadowJar(type: Jar) {
+    classifier 'release'
+    with jar
+    from {
+        configurations.include.collect {
+            zipTree(it).matching {
+                exclude 'META-INF/**', 'module-info.class'
+                exclude 'darwin/**', 'libdiscord-rpc.dylib'
+                exclude 'linux-x86-64/**', 'libdiscord-rpc.so'
+                exclude 'win32-x86/**', 'discord-rpc.dll'
+                exclude 'win32-x86-64/**', 'discord-rpc.dll'
+            }
+        }
+    }
     manifest {
-       attributes(
-                "Manifest-Version": 1.0,
-                "Main-Class": "me.grax.jbytemod.JByteMod"
+        attributes(
+                "Main-Class": "me.synnk.jbytecustom.JByteCustom"
         )
     }
 }
-
-shadowJar {
-    dependencies {
-        include(dependency('commons-io:commons-io:2.8.0'))
-        include(dependency('com.fifesoft:rsyntaxtextarea:3.1.3'))
-        include(dependency('club.minnced:java-discord-rpc:2.0.2'))
-        include(dependency('org.bitbucket.mstrobel:procyon-core:0.5.36'))
-        include(dependency('org.bitbucket.mstrobel:procyon-expressions:0.5.36'))
-        include(dependency('org.bitbucket.mstrobel:procyon-reflection:0.5.36'))
-        include(dependency('org.bitbucket.mstrobel:procyon-compilertools:0.5.36'))
-        include(dependency('org.tinyjee.jgraphx:jgraphx:3.4.1.3'))
-        include(dependency('org.jfree:jfreechart:1.5.3'))
-        include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk7'))
-        include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))
-        include(dependency('org.jetbrains.kotlin:kotlin-stdlib'))
-        include(dependency('com.weblookandfeel:weblaf-ui:1.2.13'))
-        include(dependency('org.benf:cfr:0.152'))
-        include(dependency('com.sun:attach:1.7'))
-        include(dependency('commons-cli:commons-cli:1.4'))
-        include(dependency('org.apache.ant:ant:1.10.12'))
-        include(dependency('com.google.guava:guava:31.0.1-jre'))
-        include(dependency('com.google.code.gson:gson:2.8.9'))
-        include(dependency('net.java.dev.jna:jna:5.9.0'))
-        include(dependency('com.formdev:flatlaf:2.3'))
-    }
-    exclude 'dummyThing'
-    exclude 'LICENSE.txt'
-    exclude 'LICENSE'
-    classifier = 'release'
-}
-
-jar.dependsOn("shadowJar")
