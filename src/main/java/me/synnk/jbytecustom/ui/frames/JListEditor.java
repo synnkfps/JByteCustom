@@ -1,4 +1,4 @@
-package me.synnk.jbytecustom.ui;
+package me.synnk.jbytecustom.ui.frames;
 
 import me.synnk.jbytecustom.JByteCustom;
 import me.synnk.jbytecustom.utils.ErrorDisplay;

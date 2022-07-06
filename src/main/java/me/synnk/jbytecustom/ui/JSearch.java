@@ -13,10 +13,10 @@ import java.awt.event.ActionListener;
 
 public class JSearch extends JDialog implements ActionListener {
 
-    private MyCodeList list;
-    private JTextField tf;
-    private JCheckBox mc;
-    private JCheckBox ww;
+    private final MyCodeList list;
+    private final JTextField tf;
+    private final JCheckBox mc;
+    private final JCheckBox ww;
 
     public JSearch(MyCodeList list) {
         this.list = list;

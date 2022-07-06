@@ -1,6 +1,7 @@
 package me.synnk.jbytecustom.ui;
 
 import me.synnk.jbytecustom.JByteCustom;
+import me.synnk.jbytecustom.decompiler.Decompiler;
 import me.synnk.jbytecustom.ui.lists.SearchList;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -15,19 +16,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MyTabbedPane extends JTabbedPane {
-    private MyEditorTab editorTab;
+    private final MyEditorTab editorTab;
 
     public MyTabbedPane(JByteCustom jbm) {
         this.editorTab = new MyEditorTab(jbm);
         this.addTab("Editor", editorTab);
         SearchList searchList = new SearchList(jbm);
         jbm.setSearchlist(searchList);
+
         JLabel search = new JLabel(JByteCustom.res.getResource("search_results"));
         this.addTab(JByteCustom.res.getResource("search"), this.withBorder(search, searchList));
         this.addTab("Opcodes", this.withBorder(new JLabel("Opcodes"), new OpcodeTable()));
-        //MethodRefPanel mrp = new MethodRefPanel(jbm);
-        //jbm.setMethodRefPanel(mrp);
-        //this.addTab("References", mrp);
         jbm.setTabbedPane(this);
         this.addMouseListener(new MouseAdapter() {
             @Override
@@ -79,6 +78,8 @@ public class MyTabbedPane extends JTabbedPane {
         lpad.setBorder(new EmptyBorder(1, 5, 0, 5));
         lpad.setLayout(new GridLayout());
         lpad.add(label);
+
+
         panel.add(lpad, BorderLayout.NORTH);
         JScrollPane scp = new JScrollPane(c);
         scp.getVerticalScrollBar().setUnitIncrement(16);

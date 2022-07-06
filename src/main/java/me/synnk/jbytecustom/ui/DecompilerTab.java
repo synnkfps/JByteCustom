@@ -63,10 +63,8 @@ public class DecompilerTab extends JPanel {
                 decompile(Decompiler.last, Decompiler.lastMn, true);
             }
         });
+        decompilerCombo.setPreferredSize(new Dimension(500, 10));
         rs.add(decompilerCombo);
-
-        compile.setVisible(false);
-        rs.add(compile);
 
         JButton reload = new JButton(JByteCustom.res.getResource("reload"));
         reload.addActionListener(new ActionListener() {

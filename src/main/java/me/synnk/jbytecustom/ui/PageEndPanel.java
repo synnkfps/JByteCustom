@@ -56,7 +56,6 @@ public class PageEndPanel extends JPanel {
         this.add(pgb);
 
         int mb = 1048576;
-
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
         pgb.setMaximum((int) (instance.maxMemory()) / 1000000); // 1700-1900 (gradle.properties)
         pgb.setStringPainted(true);

@@ -1,7 +1,7 @@
 package me.synnk.jbytecustom.ui.dialogue;
 
 import me.synnk.jbytecustom.JByteCustom;
-import me.synnk.jbytecustom.ui.JLDCEditor;
+import me.synnk.jbytecustom.ui.frames.JLDCEditor;
 import me.synnk.jbytecustom.utils.gui.SwingUtils;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Type;

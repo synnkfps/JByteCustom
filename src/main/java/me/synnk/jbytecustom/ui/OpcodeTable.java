@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class OpcodeTable extends JEditorPane {
     public OpcodeTable() {
@@ -16,7 +17,7 @@ public class OpcodeTable extends JEditorPane {
 
     private String loadTable() {
         try {
-            return IOUtils.toString(this.getClass().getResourceAsStream("/resources/html/optable.html"));
+            return IOUtils.toString(Objects.requireNonNull(this.getClass().getResourceAsStream("/resources/html/optable.html")));
         } catch (Exception e) {
             new ErrorDisplay(e);
             return "";

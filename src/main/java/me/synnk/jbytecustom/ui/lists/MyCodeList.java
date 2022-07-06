@@ -1,7 +1,7 @@
 package me.synnk.jbytecustom.ui.lists;
 
 import me.synnk.jbytecustom.JByteCustom;
-import me.synnk.jbytecustom.ui.JAnnotationEditor;
+import me.synnk.jbytecustom.ui.frames.JAnnotationEditor;
 import me.synnk.jbytecustom.ui.JSearch;
 import me.synnk.jbytecustom.ui.dialogue.InsnEditDialogue;
 import me.synnk.jbytecustom.ui.lists.entries.FieldEntry;

@@ -1,9 +1,10 @@
-package me.synnk.jbytecustom.ui;
+package me.synnk.jbytecustom.ui.frames;
 
 import com.alee.laf.button.WebButton;
 import com.alee.managers.popup.PopupWay;
 import com.alee.managers.popup.WebButtonPopup;
 import me.lpk.util.AccessHelper;
+import me.synnk.jbytecustom.ui.TreeCellRenderer;
 import org.objectweb.asm.Opcodes;
 
 import javax.swing.*;

@@ -5,29 +5,18 @@ import me.lpk.util.ASMUtils;
 import me.lpk.util.OpUtils;
 import me.synnk.jbytecustom.discord.Discord;
 import me.synnk.jbytecustom.logging.Logging;
-import me.synnk.jbytecustom.plugin.Plugin;
-import me.synnk.jbytecustom.plugin.PluginManager;
 import me.synnk.jbytecustom.res.LanguageRes;
 import me.synnk.jbytecustom.res.Options;
 import me.synnk.jbytecustom.ui.*;
 import me.synnk.jbytecustom.ui.graph.ControlFlowPanel;
-import me.synnk.jbytecustom.ui.lists.LVPList;
-import me.synnk.jbytecustom.ui.lists.MyCodeList;
-import me.synnk.jbytecustom.ui.lists.SearchList;
-import me.synnk.jbytecustom.ui.lists.TCBList;
+import me.synnk.jbytecustom.ui.lists.*;
 import me.synnk.jbytecustom.ui.tree.SortedTreeNode;
-import me.synnk.jbytecustom.utils.ErrorDisplay;
-import me.synnk.jbytecustom.utils.FileUtils;
+import me.synnk.jbytecustom.utils.*;
 import me.synnk.jbytecustom.utils.asm.FrameGen;
 import me.synnk.jbytecustom.utils.attach.RuntimeJarArchive;
 import me.synnk.jbytecustom.utils.gui.LookUtils;
-import me.synnk.jbytecustom.utils.task.AttachTask;
-import me.synnk.jbytecustom.utils.task.RetransformTask;
-import me.synnk.jbytecustom.utils.task.SaveTask;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
+import me.synnk.jbytecustom.utils.task.*;
+import org.apache.commons.cli.*;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -47,8 +36,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class JByteCustom extends JFrame {
-    public final static String version = "1.1.5";
-    private static final String jbytemod = "JByteCustom v" + version;
+    public final static String version = "1.1.6";
+    private static final String jbytemod = "JByteCustom" + " " + version;
 
 
     Dimension size = Toolkit.getDefaultToolkit().getScreenSize(); // screen
@@ -73,9 +62,9 @@ public class JByteCustom extends JFrame {
     }
 
     private JPanel contentPane;
-    private ClassTree jarTree;
+    private final ClassTree jarTree;
     private MyCodeList clist;
-    private PageEndPanel pp;
+    private final PageEndPanel pp;
     private SearchList slist;
     private DecompilerPanel dp;
     private TCBList tcblist;
@@ -83,15 +72,13 @@ public class JByteCustom extends JFrame {
     private InfoPanel sp;
     private LVPList lvplist;
     private ControlFlowPanel cfp;
-    private MyMenuBar myMenuBar;
+    private final MyMenuBar myMenuBar;
     private ClassNode currentNode;
     private MethodNode currentMethod;
-    private PluginManager pluginManager;
     private File filePath;
 
     /**
      * Create the frame.
-     * @throws Exception
      */
     public JByteCustom(boolean agent) throws Exception {
         if (ops.get("use_rt").getBoolean()) {
@@ -121,7 +108,6 @@ public class JByteCustom extends JFrame {
 
         System.out.println("Screen Size: " + width + "x" + height);
         this.setBounds(width/8, 0, 1024, 640);
-
         this.setTitle(jbytemod);
         this.setJMenuBar(myMenuBar = new MyMenuBar(this, agent));
         this.jarTree = new ClassTree(this);
@@ -228,6 +214,7 @@ public class JByteCustom extends JFrame {
                         lafInit = true;
                     }
                     JByteCustom frame = new JByteCustom(false);
+
                     instance = frame;
                     frame.setVisible(true);
                     if (line.hasOption("f")) {
@@ -320,14 +307,6 @@ public class JByteCustom extends JFrame {
         return myMenuBar;
     }
 
-    public PluginManager getPluginManager() {
-        return pluginManager;
-    }
-
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
-
     public PageEndPanel getPP() {
         return pp;
     }
@@ -375,9 +354,6 @@ public class JByteCustom extends JFrame {
             }
         } else {
             new ErrorDisplay(new UnsupportedOperationException(res.getResource("jar_warn")));
-        }
-        for (Plugin p : pluginManager.getPlugins()) {
-            p.loadFile(file.getClasses());
         }
     }
 
@@ -479,8 +455,6 @@ public class JByteCustom extends JFrame {
 
     @Override
     public void setVisible(boolean b) {
-        this.setPluginManager(new PluginManager(this));
-        this.myMenuBar.addPluginMenu(pluginManager.getPlugins());
         super.setVisible(b);
     }
 

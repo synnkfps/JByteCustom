@@ -1,8 +1,8 @@
 package me.synnk.jbytecustom.ui.ifs;
 
 import me.synnk.jbytecustom.JByteCustom;
-import me.synnk.jbytecustom.ui.JAccessHelper;
-import me.synnk.jbytecustom.ui.JAnnotationEditor;
+import me.synnk.jbytecustom.ui.frames.JAccessHelper;
+import me.synnk.jbytecustom.ui.frames.JAnnotationEditor;
 import me.synnk.jbytecustom.ui.dialogue.ClassDialogue;
 import me.synnk.jbytecustom.utils.gui.SwingUtils;
 import org.objectweb.asm.tree.ClassNode;

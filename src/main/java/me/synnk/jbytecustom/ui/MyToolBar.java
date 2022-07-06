@@ -2,7 +2,9 @@ package me.synnk.jbytecustom.ui;
 
 import com.alee.global.StyleConstants;
 import com.alee.laf.button.WebButton;
+import com.formdev.flatlaf.icons.FlatSearchIcon;
 import me.synnk.jbytecustom.JByteCustom;
+import me.synnk.jbytecustom.ui.frames.JAccessHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,9 +17,7 @@ public class MyToolBar extends JToolBar {
         this.menubar = (MyMenuBar) jbm.getJMenuBar();
         this.setFloatable(false);
         if (!menubar.isAgent()) {
-            this.add(makeNavigationButton(JByteCustom.res.getResource("load"), getIcon("load"), e -> {
-                menubar.openLoadDialogue();
-            }));
+            this.add(makeNavigationButton(JByteCustom.res.getResource("load"), getIcon("load"), e -> menubar.openLoadDialogue()));
             this.add(makeNavigationButton(JByteCustom.res.getResource("save"), getIcon("save"), e -> {
                 if (menubar.getLastFile() != null) {
                     jbm.saveFile(menubar.getLastFile());
@@ -26,26 +26,16 @@ public class MyToolBar extends JToolBar {
                 }
             }));
         } else {
-            this.add(makeNavigationButton(JByteCustom.res.getResource("reload"), getIcon("reload"), e -> {
-                jbm.refreshAgentClasses();
-            }));
-            this.add(makeNavigationButton(JByteCustom.res.getResource("apply"), getIcon("save"), e -> {
-                jbm.applyChangesAgent();
-            }));
+            this.add(makeNavigationButton(JByteCustom.res.getResource("reload"), getIcon("reload"), e -> jbm.refreshAgentClasses()));
+            this.add(makeNavigationButton(JByteCustom.res.getResource("apply"), getIcon("save"), e -> jbm.applyChangesAgent()));
         }
         this.addSeparator();
         this.setBorderPainted(false);
-        this.add(makeNavigationButton(JByteCustom.res.getResource("search"), getIcon("search"), e -> {
-            menubar.searchLDC();
-        }));
+        this.add(makeNavigationButton(JByteCustom.res.getResource("search"), getIcon("search"), e -> menubar.searchLDC()));
 
         this.addSeparator();
-        this.add(makeNavigationButton("Access Helper", getIcon("table"), e -> {
-            new JAccessHelper().setVisible(true);
-        }));
-        this.add(makeNavigationButton("Attach to other process", getIcon("plug"), e -> {
-            menubar.openProcessSelection();
-        }));
+        this.add(makeNavigationButton("Access Helper", getIcon("table"), e -> new JAccessHelper().setVisible(true)));
+        this.add(makeNavigationButton("Attach to other process", getIcon("plug"), e -> menubar.openProcessSelection()));
     }
 
     private ImageIcon getIcon(String string) {

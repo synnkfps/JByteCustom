@@ -51,6 +51,7 @@ task shadowJar(type: Jar) {
     from {
         configurations.include.collect {
             zipTree(it).matching {
+                // exclude possible duplicates
                 exclude 'META-INF/**', 'module-info.class'
                 exclude 'darwin/**', 'libdiscord-rpc.dylib'
                 exclude 'linux-x86-64/**', 'libdiscord-rpc.so'
@@ -59,6 +60,7 @@ task shadowJar(type: Jar) {
             }
         }
     }
+    // set main class
     manifest {
         attributes(
                 "Main-Class": "me.synnk.jbytecustom.JByteCustom"

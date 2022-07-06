@@ -1,9 +1,9 @@
 package me.synnk.jbytecustom.ui.dialogue;
 
 import me.synnk.jbytecustom.JByteCustom;
-import me.synnk.jbytecustom.ui.JAccessSelectorPanel;
-import me.synnk.jbytecustom.ui.JFrameList;
-import me.synnk.jbytecustom.ui.JLDCEditor;
+import me.synnk.jbytecustom.ui.frames.JAccessSelectorPanel;
+import me.synnk.jbytecustom.ui.frames.JFrameList;
+import me.synnk.jbytecustom.ui.frames.JLDCEditor;
 import me.synnk.jbytecustom.utils.InstrUtils;
 import me.synnk.jbytecustom.utils.asm.Loader;
 import me.synnk.jbytecustom.utils.gui.SwingUtils;

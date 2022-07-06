@@ -1,4 +1,4 @@
-package me.synnk.jbytecustom.ui;
+package me.synnk.jbytecustom.ui.analysis;
 
 import me.synnk.jbytecustom.analysis.obfuscation.ObfuscationAnalyzer;
 import org.jfree.chart.ChartFactory;

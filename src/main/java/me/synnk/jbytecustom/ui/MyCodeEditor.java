@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MyCodeEditor extends JPanel {
-    private MyCodeList cl;
+    private final MyCodeList cl;
 
     public MyCodeEditor(JByteCustom jbm, JLabel editor) {
         this.setLayout(new BorderLayout());

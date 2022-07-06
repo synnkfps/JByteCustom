@@ -1,10 +1,7 @@
 package me.synnk.jbytecustom.utils.task;
 
-import me.synnk.jbytecustom.CustomRPC;
-import me.synnk.jbytecustom.JByteCustom;
-import me.synnk.jbytecustom.JarArchive;
+import me.synnk.jbytecustom.*;
 import me.synnk.jbytecustom.discord.Discord;
-import me.synnk.jbytecustom.scanner.ScannerThread;
 import me.synnk.jbytecustom.ui.PageEndPanel;
 import me.synnk.jbytecustom.utils.ErrorDisplay;
 import me.synnk.jbytecustom.utils.FileUtils;
@@ -17,13 +14,8 @@ import org.objectweb.asm.tree.ClassNode;
 import de.xbrowniecodez.jbytemod.asm.CustomClassReader;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class LoadTask extends SwingWorker<Void, Integer> {
 
@@ -37,7 +29,6 @@ public class LoadTask extends SwingWorker<Void, Integer> {
     private long maxMem;
     private boolean memoryWarning;
     private long startTime;
-    private ScannerThread scannerThread;
     private int othersFile;
     private int junkClasses;
 
@@ -51,8 +42,7 @@ public class LoadTask extends SwingWorker<Void, Integer> {
             this.jpb = jbm.getPP();
             this.ja = ja;
             this.file = input;
-            // clean old cache
-            // ja.setClasses(null);
+            this.ja.setClasses(null); // cache test
             this.maxMem = Runtime.getRuntime().maxMemory();
             this.memoryWarning = JByteCustom.ops.get("memory_warning").getBoolean();
         } catch (IOException e) {
@@ -204,8 +194,5 @@ public class LoadTask extends SwingWorker<Void, Integer> {
 
         if(!JByteCustom.ops.get("auto_scan").getBoolean()) return;
 
-        scannerThread = new ScannerThread(ja.getClasses());
-        scannerThread.setJarManifest(ja.getJarManifest());
-        scannerThread.start();
     }
 }

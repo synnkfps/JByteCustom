@@ -23,12 +23,12 @@ How to use:
 <br>
 
 ## Contributors
-- JohnShiozo (did the gradle support and updated libs)
 - SynnK (me) (changed some things, like rpc, etc...)
+- JohnShiozo (did the gradle support and updated libs)
+- xBrownieCodez (did the remaster version)
 - GraxCode (original jbytemod dev)
 - UltraPanda
 - Ho3
-- xBrownieCodez (did the remaster version)
 - gtx
 - Vaziak
 

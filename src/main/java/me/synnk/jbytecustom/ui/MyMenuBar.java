@@ -7,12 +7,14 @@ import me.synnk.jbytecustom.CustomRPC;
 import me.synnk.jbytecustom.JByteCustom;
 import me.synnk.jbytecustom.JarArchive;
 import me.synnk.jbytecustom.discord.Discord;
-import me.synnk.jbytecustom.plugin.Plugin;
 import me.synnk.jbytecustom.res.LanguageRes;
 import me.synnk.jbytecustom.res.Option;
 import me.synnk.jbytecustom.res.Options;
-import me.synnk.jbytecustom.scanner.ScannerThread;
+import me.synnk.jbytecustom.ui.analysis.JMethodObfAnalysis;
+import me.synnk.jbytecustom.ui.analysis.JNameObfAnalysis;
 import me.synnk.jbytecustom.ui.dialogue.ClassDialogue;
+import me.synnk.jbytecustom.ui.frames.JAboutFrame;
+import me.synnk.jbytecustom.ui.frames.JAccessHelper;
 import me.synnk.jbytecustom.ui.lists.entries.SearchEntry;
 import me.synnk.jbytecustom.utils.DeobfuscateUtils;
 import me.synnk.jbytecustom.utils.ErrorDisplay;
@@ -247,27 +249,6 @@ public class MyMenuBar extends JMenuBar {
         // Utils:
         JMenu deobfTools = new JMenu(JByteCustom.res.getResource("deobf_tools"));
         utils.add(deobfTools);
-
-        JMenu raccoon = new JMenu(JByteCustom.res.getResource("raccoon"));
-        utils.add(raccoon);
-
-        JMenuItem raccoon_scan = new JMenuItem(JByteCustom.res.getResource("raccoon_scan"));
-        raccoon_scan.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (jbm.getFile() != null && jbm.getFile().getClasses() != null) {
-                    JarArchive ja = JByteCustom.instance.getFile();
-                    ScannerThread scannerThread;
-
-                    scannerThread = new ScannerThread(ja.getClasses());
-                    scannerThread.setJarManifest(ja.getJarManifest());
-                    scannerThread.start();
-                }else {
-                    canNotFindFile();
-                }
-            }
-        });
-        raccoon.add(raccoon_scan);
 
         JMenuItem findSF = new JMenuItem(JByteCustom.res.getResource("find_sourcefiles"));
         findSF.addActionListener(new ActionListener() {
@@ -910,21 +891,6 @@ public class MyMenuBar extends JMenuBar {
             File input = jfc.getSelectedFile();
             JByteCustom.LOGGER.log("Selected input file: " + input.getAbsolutePath());
             jbm.loadFile(input);
-        }
-    }
-
-    public void addPluginMenu(ArrayList<Plugin> plugins) {
-        if (!plugins.isEmpty()) {
-            JMenu pluginMenu = new JMenu("Plugins");
-            for (Plugin p : plugins) {
-                JMenuItem jmi = new JMenuItem(p.getName() + " " + p.getVersion());
-                jmi.setEnabled(p.isClickable());
-                jmi.addActionListener(e -> {
-                    p.menuClick();
-                });
-                pluginMenu.add(jmi);
-            }
-            this.add(pluginMenu);
         }
     }
 

@@ -1,4 +1,4 @@
-package me.synnk.jbytecustom.ui;
+package me.synnk.jbytecustom.ui.frames;
 
 import org.objectweb.asm.Opcodes;
 
