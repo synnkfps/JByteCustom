@@ -65,3 +65,5 @@ task shadowJar(type: Jar) {
         )
     }
 }
+
+jar.dependsOn(shadowJar)
