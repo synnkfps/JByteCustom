@@ -20,8 +20,8 @@ public class InfoPanel extends JPanel {
         }
     }
 
-    private JDesktopPane deskPane;
-    private JByteCustom jbm;
+    private final JDesktopPane deskPane;
+    private final JByteCustom jbm;
 
     public InfoPanel(JByteCustom jbm) {
         this.jbm = jbm;
@@ -64,7 +64,7 @@ public class InfoPanel extends JPanel {
         this.repaint();
     }
 
-    class DeskMan extends DefaultDesktopManager {
+    static class DeskMan extends DefaultDesktopManager {
 
         @Override
         public void beginDraggingFrame(JComponent f) {

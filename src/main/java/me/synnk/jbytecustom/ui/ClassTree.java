@@ -2,6 +2,8 @@ package me.synnk.jbytecustom.ui;
 
 import me.synnk.jbytecustom.JByteCustom;
 import me.synnk.jbytecustom.JarArchive;
+import me.synnk.jbytecustom.decompiler.Decompiler;
+import me.synnk.jbytecustom.decompiler.Decompilers;
 import me.synnk.jbytecustom.ui.dialogue.InsnEditDialogue;
 import me.synnk.jbytecustom.ui.tree.SortedTreeNode;
 import me.synnk.jbytecustom.utils.ErrorDisplay;
@@ -13,11 +15,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -28,28 +26,23 @@ import java.util.List;
 
 public class ClassTree extends JTree implements IDropUser {
 
-    private static ArrayList<Object> expandedNodes = new ArrayList<>();
-    private JByteCustom jbm;
-    private DefaultTreeModel model;
-    private HashMap<String, SortedTreeNode> preloadMap;
+    private static final ArrayList<Object> expandedNodes = new ArrayList<>();
+    private final JByteCustom jbm;
+    private final DefaultTreeModel model;
 
     public ClassTree(JByteCustom jam) {
         this.jbm = jam;
         this.setRootVisible(false);
         this.setShowsRootHandles(true);
         this.setCellRenderer(new TreeCellRenderer());
-        this.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                SortedTreeNode node = (SortedTreeNode) ClassTree.this.getLastSelectedPathComponent();
-                if (node == null)
-                    return;
-                if (node.getCn() != null && node.getMn() != null) {
-                    jam.selectMethod(node.getCn(), node.getMn());
-                } else if (node.getCn() != null) {
-                    jam.selectClass(node.getCn());
-                } else {
-
-                }
+        this.addTreeSelectionListener(e -> {
+            SortedTreeNode node = (SortedTreeNode) ClassTree.this.getLastSelectedPathComponent();
+            if (node == null)
+                return;
+            if (node.getCn() != null && node.getMn() != null) {
+                jam.selectMethod(node.getCn(), node.getMn());
+            } else if (node.getCn() != null) {
+                jam.selectClass(node.getCn());
             }
         });
         this.model = new DefaultTreeModel(new SortedTreeNode(""));
@@ -64,7 +57,7 @@ public class ClassTree extends JTree implements IDropUser {
         root.removeAllChildren();
         tm.reload();
 
-        preloadMap = new HashMap<>();
+        HashMap<String, SortedTreeNode> preloadMap = new HashMap<>();
         if (jar.getClasses() != null)
             for (ClassNode c : jar.getClasses().values()) {
                 String name = c.name;
@@ -112,12 +105,11 @@ public class ClassTree extends JTree implements IDropUser {
 
     public static String[] array_unique(String[] ss) {
         // array_unique
-        List<String> list =new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for(String s:ss){
-            if(!list.contains(s))			//或者list.indexOf(s)!=-1
-                list.add(s);
+            if(!list.contains(s)) list.add(s);
         }
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
     public void expandSaved(SortedTreeNode node) {
@@ -141,6 +133,7 @@ public class ClassTree extends JTree implements IDropUser {
         SortedTreeNode stn = (SortedTreeNode) path.getLastPathComponent();
         if (stn.getCn() != null) {
             expandedNodes.add(stn.getCn());
+
         } else {
             expandedNodes.add(path.toString());
         }
@@ -176,78 +169,62 @@ public class ClassTree extends JTree implements IDropUser {
                             //method selected
                             JPopupMenu menu = new JPopupMenu();
                             JMenuItem edit = new JMenuItem(JByteCustom.res.getResource("edit"));
-                            edit.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    new InsnEditDialogue(mn, mn).open();
-                                    changedChilds((TreeNode) model.getRoot());
-                                }
+                            edit.addActionListener(e -> {
+                                new InsnEditDialogue(mn, mn).open();
+                                changedChild((TreeNode) model.getRoot());
                             });
                             menu.add(edit);
                             JMenuItem duplicate = new JMenuItem(JByteCustom.res.getResource("duplicate"));
-                            duplicate.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    MethodNode dup = MethodUtils.copy(mn);
-                                    String name = JOptionPane.showInputDialog(null, "Duplicated method name ?", "Rename", JOptionPane.QUESTION_MESSAGE);
-                                    if(MethodUtils.equalName(cn, name)){
-                                        JOptionPane.showMessageDialog(null, "The name is already existed.", "Existed Name!", JOptionPane.WARNING_MESSAGE);
-                                        return;
-                                    }
-                                    dup.name = name;
-                                    cn.methods.add(dup);
-                                    jbm.getJarTree().refreshTree(jbm.getFile());
+                            duplicate.addActionListener(e -> {
+                                MethodNode dup = MethodUtils.copy(mn);
+                                String name = JOptionPane.showInputDialog(null, "Duplicated method name ?", "Rename", JOptionPane.QUESTION_MESSAGE);
+                                if(MethodUtils.equalName(cn, name)){
+                                    JOptionPane.showMessageDialog(null, "The name is already existed.", "Existed Name!", JOptionPane.WARNING_MESSAGE);
+                                    return;
                                 }
+                                dup.name = name;
+                                cn.methods.add(dup);
+                                jbm.getJarTree().refreshTree(jbm.getFile());
                             });
                             menu.add(duplicate);
                             JMenuItem search = new JMenuItem(JByteCustom.res.getResource("search"));
-                            search.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    jbm.getSearchList().searchForFMInsn(cn.name, mn.name, mn.desc, false, false);
-                                }
-                            });
+                            search.addActionListener(e -> jbm.getSearchList().searchForFMInsn(cn.name, mn.name, mn.desc, false, false));
                             menu.add(search);
                             JMenuItem remove = new JMenuItem(JByteCustom.res.getResource("remove"));
-                            remove.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
-                                            JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                        cn.methods.remove(mn);
-                                        model.removeNodeFromParent(stn);
-                                    }
+                            remove.addActionListener(e -> {
+                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                    cn.methods.remove(mn);
+                                    model.removeNodeFromParent(stn);
                                 }
                             });
                             menu.add(remove);
                             JMenu tools = new JMenu(JByteCustom.res.getResource("tools"));
                             JMenuItem clear = new JMenuItem(JByteCustom.res.getResource("clear"));
-                            clear.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_clear"), JByteCustom.res.getResource("confirm"),
-                                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                        MethodUtils.clear(mn);
-                                        jbm.selectMethod(cn, mn);
-                                    }
+                            clear.addActionListener(e -> {
+                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_clear"), JByteCustom.res.getResource("confirm"),
+                                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                    MethodUtils.clear(mn);
+                                    jbm.selectMethod(cn, mn);
                                 }
                             });
                             tools.add(clear);
 
                             JMenuItem lines = new JMenuItem(JByteCustom.res.getResource("remove_lines"));
-                            lines.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_lines"), JByteCustom.res.getResource("confirm"),
-                                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                        MethodUtils.removeLines(mn);
-                                        jbm.selectMethod(cn, mn);
-                                    }
+                            lines.addActionListener(e -> {
+                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_lines"), JByteCustom.res.getResource("confirm"),
+                                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                    MethodUtils.removeLines(mn);
+                                    jbm.selectMethod(cn, mn);
                                 }
                             });
                             tools.add(lines);
                             JMenuItem deadcode = new JMenuItem(JByteCustom.res.getResource("remove_dead_code"));
-                            deadcode.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_dead_code"),
-                                            JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                        MethodUtils.removeDeadCode(cn, mn);
-                                        jbm.selectMethod(cn, mn);
-                                    }
+                            deadcode.addActionListener(e -> {
+                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_dead_code"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                    MethodUtils.removeDeadCode(cn, mn);
+                                    jbm.selectMethod(cn, mn);
                                 }
                             });
                             tools.add(deadcode);
@@ -257,51 +234,41 @@ public class ClassTree extends JTree implements IDropUser {
                             //class selected
                             JPopupMenu menu = new JPopupMenu();
                             JMenuItem insert = new JMenuItem(JByteCustom.res.getResource("add_method"));
-                            insert.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    MethodNode mn = new MethodNode(1, "", "()V", null, null);
-                                    mn.maxLocals = 1;
-                                    if (new InsnEditDialogue(mn, mn).open()) {
-                                        if (mn.name.isEmpty() || mn.desc.isEmpty()) {
-                                            ErrorDisplay.error("Method name / desc cannot be empty");
-                                            return;
-                                        }
-                                        cn.methods.add(mn);
-                                        model.insertNodeInto(new SortedTreeNode(cn, mn), stn, 0);
+                            insert.addActionListener(e -> {
+                                MethodNode mn1 = new MethodNode(1, "", "()V", null, null);
+                                mn1.maxLocals = 1;
+                                if (new InsnEditDialogue(mn1, mn1).open()) {
+                                    if (mn1.name.isEmpty() || mn1.desc.isEmpty()) {
+                                        ErrorDisplay.error("Method name / desc cannot be empty");
+                                        return;
                                     }
+                                    cn.methods.add(mn1);
+                                    model.insertNodeInto(new SortedTreeNode(cn, mn1), stn, 0);
                                 }
                             });
                             menu.add(insert);
 
                             JMenuItem edit = new JMenuItem(JByteCustom.res.getResource("edit"));
-                            edit.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (new InsnEditDialogue(mn, cn).open()) {
-                                        jbm.refreshTree();
-                                    }
+                            edit.addActionListener(e -> {
+                                if (new InsnEditDialogue(mn, cn).open()) {
+                                    jbm.refreshTree();
                                 }
                             });
                             menu.add(edit);
                             JMenu tools = new JMenu(JByteCustom.res.getResource("tools"));
                             JMenuItem frames = new JMenuItem(JByteCustom.res.getResource("generate_frames"));
-                            frames.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    FrameGen.regenerateFrames(jbm, cn);
-                                }
-                            });
+                            frames.addActionListener(e -> FrameGen.regenerateFrames(jbm, cn));
                             JMenuItem remove = new JMenuItem(JByteCustom.res.getResource("remove"));
-                            remove.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
-                                            JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                        jbm.getFile().getClasses().remove(cn.name);
-                                        TreeNode parent = stn.getParent();
-                                        model.removeNodeFromParent(stn);
-                                        while (parent != null && !parent.children().hasMoreElements() && parent != model.getRoot()) {
-                                            TreeNode par = parent.getParent();
-                                            model.removeNodeFromParent((MutableTreeNode) parent);
-                                            parent = par;
-                                        }
+                            remove.addActionListener(e -> {
+                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                    jbm.getFile().getClasses().remove(cn.name);
+                                    TreeNode parent = stn.getParent();
+                                    model.removeNodeFromParent(stn);
+                                    while (parent != null && !parent.children().hasMoreElements() && parent != model.getRoot()) {
+                                        TreeNode par = parent.getParent();
+                                        model.removeNodeFromParent((MutableTreeNode) parent);
+                                        parent = par;
                                     }
                                 }
                             });
@@ -312,32 +279,28 @@ public class ClassTree extends JTree implements IDropUser {
                         } else {
                             JPopupMenu menu = new JPopupMenu();
                             JMenuItem remove = new JMenuItem(JByteCustom.res.getResource("remove"));
-                            remove.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
-                                            JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                        TreeNode parent = stn.getParent();
-                                        deleteItselfAndChilds(stn);
-                                        while (parent != null && !parent.children().hasMoreElements() && parent != model.getRoot()) {
-                                            TreeNode par = parent.getParent();
-                                            model.removeNodeFromParent((MutableTreeNode) parent);
-                                            parent = par;
-                                        }
+                            remove.addActionListener(e -> {
+                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                    TreeNode parent = stn.getParent();
+                                    deleteItselfAndChild(stn);
+                                    while (parent != null && !parent.children().hasMoreElements() && parent != model.getRoot()) {
+                                        TreeNode par = parent.getParent();
+                                        model.removeNodeFromParent((MutableTreeNode) parent);
+                                        parent = par;
                                     }
                                 }
                             });
                             menu.add(remove);
                             JMenuItem add = new JMenuItem(JByteCustom.res.getResource("add"));
-                            add.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    ClassNode cn = new ClassNode();
-                                    cn.version = 52;
-                                    cn.name = getPath(stn);
-                                    cn.superName = "java/lang/Object";
-                                    if (new InsnEditDialogue(mn, cn).open()) {
-                                        jbm.getFile().getClasses().put(cn.name, cn);
-                                        jbm.refreshTree();
-                                    }
+                            add.addActionListener(e -> {
+                                ClassNode cn1 = new ClassNode();
+                                cn1.version = 52;
+                                cn1.name = getPath(stn);
+                                cn1.superName = "java/lang/Object";
+                                if (new InsnEditDialogue(mn, cn1).open()) {
+                                    jbm.getFile().getClasses().put(cn1.name, cn1);
+                                    jbm.refreshTree();
                                 }
                             });
                             menu.add(add);
@@ -366,16 +329,16 @@ public class ClassTree extends JTree implements IDropUser {
     }
 
     private String getPath(SortedTreeNode stn) {
-        String path = "";
+        StringBuilder path = new StringBuilder();
         while (stn != null && stn != model.getRoot()) {
-            path = stn.toString() + "/" + path;
+            path.insert(0, stn + "/");
             stn = (SortedTreeNode) stn.getParent();
         }
-        return path;
+        return path.toString();
     }
 
     private void sort(DefaultTreeModel model, SortedTreeNode node, boolean sm) {
-        if (!node.isLeaf() && (sm ? true : (!node.toString().endsWith(".class")))) {
+        if (!node.isLeaf() && (sm || (!node.toString().endsWith(".class")))) {
             node.sort();
             for (int i = 0; i < model.getChildCount(node); i++) {
                 SortedTreeNode child = ((SortedTreeNode) model.getChild(node, i));
@@ -395,24 +358,24 @@ public class ClassTree extends JTree implements IDropUser {
     }
 
     public void refreshMethod(ClassNode cn, MethodNode mn) {
-        changedChilds((TreeNode) model.getRoot());
+        changedChild((TreeNode) model.getRoot());
     }
 
-    public void changedChilds(TreeNode node) {
+    public void changedChild(TreeNode node) {
         model.nodeChanged(node);
         if (node.getChildCount() >= 0) {
             for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
-                changedChilds(n);
+                changedChild(n);
             }
         }
     }
 
-    public void deleteItselfAndChilds(SortedTreeNode node) {
+    public void deleteItselfAndChild(SortedTreeNode node) {
         if (node.getChildCount() >= 0) {
             for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
-                deleteItselfAndChilds((SortedTreeNode) n);
+                deleteItselfAndChild((SortedTreeNode) n);
             }
         }
         if (node.getCn() != null)

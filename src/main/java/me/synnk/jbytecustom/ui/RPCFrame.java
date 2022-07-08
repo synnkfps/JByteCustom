@@ -17,7 +17,6 @@ public class RPCFrame extends JDialog {
 
 
     public RPCFrame(JByteCustom jbm) {
-
         this.setTitle("RPC Changer");
         // create a new panel with GridBagLayout manager
         JPanel newPanel = new JPanel(new GridBagLayout());

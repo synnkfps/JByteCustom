@@ -1,6 +1,5 @@
 package me.synnk.jbytecustom.ui;
 
-import me.synnk.jbytecustom.JByteCustom;
 import me.synnk.jbytecustom.utils.ErrorDisplay;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -15,11 +14,11 @@ public class DecompilerPanel extends RSyntaxTextArea {
         this.setCodeFoldingEnabled(true);
         this.setAntiAliasingEnabled(true);
         this.setFont(new Font("Arial", Font.PLAIN, 12));
-        this.setEditable(true);
+        this.setEditable(false);
+
         // change theme to java
         try {
             Theme theme;
-
             theme = Theme.load(getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml"));
 
             theme.apply(this);

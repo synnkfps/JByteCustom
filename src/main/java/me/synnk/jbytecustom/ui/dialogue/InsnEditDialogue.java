@@ -67,7 +67,7 @@ public class InsnEditDialogue extends ClassDialogue {
         textFieldToolTips.put("desc", "e.g. ()V");
     }
 
-    private MethodNode mn;
+    private final MethodNode mn;
     private Handle handle;
     private JTextField ownerField;
     private JTextField nameField;

@@ -652,10 +652,6 @@ public class MyMenuBar extends JMenuBar {
                         public void actionPerformed(ActionEvent e) {
                             op.setValue(jmi.isSelected());
                             o.save();
-                            if (op.getName().equals("use_weblaf")) {
-                                JByteCustom.resetLAF();
-                                JByteCustom.restartGUI();
-                            }
                         }
                     });
                     menu.add(jmi);
@@ -884,6 +880,7 @@ public class MyMenuBar extends JMenuBar {
 
     protected void openLoadDialogue() {
         JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.home") + File.separator + "Desktop"));
+        jfc.setSelectedFile(new File(""));
         jfc.setAcceptAllFileFilterUsed(false);
         jfc.setFileFilter(new FileNameExtensionFilter("Java Package (*.jar) or Java Class (*.class)", "jar", "class"));
         int result = jfc.showOpenDialog(this);

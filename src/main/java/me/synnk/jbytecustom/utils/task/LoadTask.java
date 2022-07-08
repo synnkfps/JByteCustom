@@ -3,6 +3,7 @@ package me.synnk.jbytecustom.utils.task;
 import me.synnk.jbytecustom.*;
 import me.synnk.jbytecustom.discord.Discord;
 import me.synnk.jbytecustom.ui.PageEndPanel;
+import me.synnk.jbytecustom.ui.RPCFrame;
 import me.synnk.jbytecustom.utils.ErrorDisplay;
 import me.synnk.jbytecustom.utils.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -117,7 +118,7 @@ public class LoadTask extends SwingWorker<Void, Integer> {
             if (name.endsWith(".class") || name.endsWith(".class/")) {
                 synchronized (classes) {
                     try {
-                        //JByteCustom.LOGGER.log("Class file: " + name + "-" + bytes.length);
+                        JByteCustom.LOGGER.log("Class file: " + name + "-" + bytes.length);
                         String cafebabe = String.format("%02X%02X%02X%02X", bytes[0], bytes[1], bytes[2], bytes[3]);
                         if (cafebabe.toLowerCase().equals("cafebabe")) {
                             try {
@@ -177,7 +178,9 @@ public class LoadTask extends SwingWorker<Void, Integer> {
     @Override
     protected void process(List<Integer> chunks) {
         int i = chunks.get(chunks.size() - 1);
-        Discord.updateCustomDetails("(" + i + "%) Loading " + file.getName());
+        if (RPCFrame.fieldDetails.getText().isEmpty()) {
+            Discord.updateCustomDetails("(" + i + "%) Loading " + file.getName());
+        }
         jpb.setValue(i);
         super.process(chunks);
     }
@@ -185,8 +188,10 @@ public class LoadTask extends SwingWorker<Void, Integer> {
     @Override
     protected void done() {
         JByteCustom.lastEditFile = file.getName();
-        CustomRPC.customDetails = "Working on " + file.getName();
-        Discord.updateCustomDetails(CustomRPC.customDetails);
+        if (RPCFrame.fieldDetails.getText().isEmpty()) {
+            CustomRPC.customDetails = "Working on " + file.getName();
+            Discord.updateCustomDetails(CustomRPC.customDetails);
+        }
         JByteCustom.LOGGER.log("Successfully loaded file!");
         jbm.refreshTree();
         JByteCustom.LOGGER.log("Tree refreshed.");

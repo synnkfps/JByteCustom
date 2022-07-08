@@ -61,6 +61,8 @@ public class ProcyonDecompiler extends Decompiler {
             StringWriter stringwriter = new StringWriter();
             settings.getLanguage().decompileType(resolvedType, new PlainTextOutput(stringwriter), decompilationOptions);
             String decompiledSource = stringwriter.toString();
+            // :trollface:
+            DecompilerOutput.decompiledClass = decompiledSource;
             return decompiledSource;
         } catch (Exception e) {
             e.printStackTrace();

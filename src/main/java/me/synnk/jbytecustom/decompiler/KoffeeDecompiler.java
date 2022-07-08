@@ -22,6 +22,7 @@ public class KoffeeDecompiler extends Decompiler {
         } else {
             MethodDisassemblyKt.disassembleMethod(mn, sourceCodeGenerator, context);
         }
+        // :trollface:
 
         return sourceCodeGenerator.toString();
     }

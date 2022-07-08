@@ -16,7 +16,7 @@ public class Discord {
         DiscordEventHandlers handlers = new DiscordEventHandlers();
         handlers.ready = (user) -> JByteCustom.LOGGER.log("Discord is now ready.");
         discordRPC.Discord_Initialize(applicationId, handlers, true, "");
-        startTimestamp = System.currentTimeMillis();
+        startTimestamp = 432L;
         updatePresence("", "Idle...");
         updateDecompiler(currentDecompiler);
     }

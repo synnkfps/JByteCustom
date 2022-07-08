@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class JByteCustom extends JFrame {
-    public final static String version = "1.1.6";
+    public final static String version = "1.1.7";
     private static final String jbytemod = "JByteCustom" + " " + version;
 
 

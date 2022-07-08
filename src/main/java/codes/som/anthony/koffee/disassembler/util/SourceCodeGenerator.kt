@@ -1,5 +1,6 @@
 package codes.som.anthony.koffee.disassembler.util
 
+import me.synnk.jbytecustom.decompiler.DecompilerOutput
 import java.lang.StringBuilder
 
 class SourceCodeGenerator {
@@ -29,6 +30,7 @@ class SourceCodeGenerator {
     }
 
     override fun toString(): String {
+        DecompilerOutput.decompiledClass = builder.toString()
         return builder.toString()
     }
 }

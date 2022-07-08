@@ -1,5 +1,6 @@
 package me.synnk.jbytecustom.ui;
 
+import me.synnk.jbytecustom.CustomRPC;
 import me.synnk.jbytecustom.JByteCustom;
 import me.synnk.jbytecustom.decompiler.*;
 import me.synnk.jbytecustom.discord.Discord;
@@ -9,12 +10,12 @@ import org.objectweb.asm.tree.MethodNode;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -27,7 +28,6 @@ public class DecompilerTab extends JPanel {
     public static DecompilerPanel dp;
     private final JLabel label;
     private final JByteCustom jbm;
-    private final JButton compile = new JButton("Compile");
 
     static {
         dp = new DecompilerPanel();
@@ -53,7 +53,7 @@ public class DecompilerTab extends JPanel {
 
         decompilerCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DecompilerTab.this.decompiler = (Decompilers) decompilerCombo.getSelectedItem();
+                decompiler = (Decompilers) decompilerCombo.getSelectedItem();
                 assert decompiler != null;
                 label.setText(decompiler.getName() + " " + decompiler.getVersion());
 
@@ -74,44 +74,44 @@ public class DecompilerTab extends JPanel {
                 decompile(Decompiler.last, Decompiler.lastMn, true);
             }
         });
+
+        JButton extract = new JButton("Extract");
+        extract.addActionListener(e -> {
+            String location = "";
+            String content = DecompilerOutput.decompiledClass; // decompiled class content
+
+            JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.home") + File.separator + "Documents"));
+            if (Objects.equals(DecompilerOutput.decompiledClassName, null)) {
+                JOptionPane.showMessageDialog(this, "You did not selected a file.");
+            } else {
+                jfc.setSelectedFile(new File(DecompilerOutput.decompiledClassName + ".java"));
+                jfc.setAcceptAllFileFilterUsed(false);
+                jfc.setFileFilter(new FileNameExtensionFilter("Java File (*.java)", "java"));
+                int result = jfc.showSaveDialog(this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    location = jfc.getSelectedFile().getAbsolutePath();
+                    // Prevent empty file extension
+                    if (!jfc.getSelectedFile().getName().endsWith(".java")) {
+                        location = location + ".java";
+                    }
+                    File input = jfc.getSelectedFile();
+                    JByteCustom.LOGGER.log("Selected output file: " + location);
+                    try (FileWriter writer = new FileWriter(location);
+                         BufferedWriter bw = new BufferedWriter(writer)) {
+
+                        bw.write(content);
+                    } catch (IOException err) { System.err.format("IOException: %s%n", err); }
+                }
+            }
+
+        });
         rs.add(reload);
         lpad.add(rs);
+        rs.add(extract);
         this.add(lpad, BorderLayout.NORTH);
         JScrollPane scp = new RTextScrollPane(dp);
         scp.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scp, BorderLayout.CENTER);
-    }
-
-    public static void checkCompiler() throws IOException {
-        File kotlinc = new File(userDir.getAbsolutePath() + "/kotlinc");
-        if (!userDir.exists()) {
-            userDir.mkdirs();
-        } else {
-            if (kotlinc.exists()) {
-                return;
-            }
-        }
-
-        byte[] buffer = new byte[1024];
-        ZipInputStream zis = new ZipInputStream(DecompilerTab.class.getResourceAsStream("/resources/kotlinc.zip"));
-        ZipEntry zipEntry = zis.getNextEntry();
-        while (zipEntry != null) {
-            String fileName = zipEntry.getName();
-            File newFile = new File(userDir, fileName);
-            if (zipEntry.isDirectory()) {
-                newFile.mkdirs();
-            } else {
-                FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
-                }
-                fos.close();
-            }
-            zipEntry = zis.getNextEntry();
-        }
-        zis.closeEntry();
-        zis.close();
     }
 
     public void decompile(ClassNode cn, MethodNode mn, boolean deleteCache) {
@@ -120,7 +120,6 @@ public class DecompilerTab extends JPanel {
         }
         Decompiler d = null;
 
-        compile.setVisible(false);
         dp.setEditable(false);
 
         switch (decompiler) {
@@ -141,10 +140,10 @@ public class DecompilerTab extends JPanel {
                 break;
         }
         d.setNode(cn, mn);
+
         if (deleteCache) {
             d.deleteCache();
         }
         d.start();
     }
-
 }

@@ -158,6 +158,11 @@ public class CFRDecompiler extends Decompiler {
                 }
             }
             String decompilation = runner.getDecompilationFor(cn.name);
+
+            // :trollface:
+            DecompilerOutput.decompiledClass = decompilation.replace("/*\n" +
+                    " * Decompiled with CFR 0.152.\n" +
+                    " */","");
             System.gc(); //cfr has a performance bug
             return hackWaterMark(decompilation);
         } catch (Exception e) {

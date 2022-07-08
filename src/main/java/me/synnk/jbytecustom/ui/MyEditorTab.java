@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import com.alee.utils.SwingUtils;
 import me.synnk.jbytecustom.CustomRPC;
 import me.synnk.jbytecustom.JByteCustom;
+import me.synnk.jbytecustom.decompiler.DecompilerOutput;
 import me.synnk.jbytecustom.discord.Discord;
 import me.synnk.jbytecustom.ui.graph.ControlFlowPanel;
 import org.objectweb.asm.tree.ClassNode;
@@ -83,7 +84,7 @@ public class MyEditorTab extends JPanel {
                 center.add(decompiler);
                 center.revalidate();
                 repaint();
-                decompiler.decompile(jbm.getCurrentNode(), jbm.getCurrentMethod(), false);
+                decompiler.decompile(jbm.getCurrentNode(), jbm.getCurrentMethod(), true);
             }
         });
         analysisBtn = new WebBreadcrumbToggleButton(analysisText);
@@ -134,6 +135,7 @@ public class MyEditorTab extends JPanel {
         String regexed = cn.name.toString();
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
+        DecompilerOutput.decompiledClassName = regexed.replaceAll(".+/", "");
 
         if (RPCFrame.fieldState.getText().isEmpty()) {
             CustomRPC.customStatus = "Editing " + regexed.replaceAll(".+/", "") + ".class";
@@ -143,7 +145,7 @@ public class MyEditorTab extends JPanel {
         }
 
         if (decompilerBtn.isSelected()) {
-            decompiler.decompile(cn, null, false);
+            decompiler.decompile(cn, null, true);
         }
         if (analysisBtn.isSelected()) {
             analysis.clear();
@@ -162,7 +164,7 @@ public class MyEditorTab extends JPanel {
             Discord.refresh();
         }
         if (decompilerBtn.isSelected()) {
-            decompiler.decompile(cn, mn, false);
+            decompiler.decompile(cn, mn, true);
         }
         if (analysisBtn.isSelected()) {
             analysis.generateList();

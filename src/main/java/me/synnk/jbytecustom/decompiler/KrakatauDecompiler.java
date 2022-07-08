@@ -84,7 +84,8 @@ public class KrakatauDecompiler extends Decompiler {
             zis.close();
             tempJar.delete();
             outputZip.delete();
-            return new String(out.toByteArray(), "UTF-8");
+            DecompilerOutput.decompiledClass = out.toString("UTF-8");
+            return out.toString("UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
             StringWriter sw = new StringWriter();
