@@ -24,13 +24,13 @@ How to use:
 
 ## Extracting Classes
 ### 1. Select your class, then switch to "Decompiler" tab.
-![](step 1.png)
+![](step_1.png)
 
 ### 2. Click on the "Extract" button!
-![](step 2.png)
+![](step_2.png)
 
 ### 3. Select the folder and the file name to save the decompiled class!
-![](step 3.png)
+![](step_3.png)
 
 #### OBS: The "Extract" Button only works if you have decompiled a class!
 #### OBS: Remember to put .java on the end of the file! (if you forget it, JByteCustom will do it for you!)
