@@ -32,8 +32,10 @@ How to use:
 ### 3. Select the folder and the file name to save the decompiled class!
 ![](step%203.png)
 
-#### OBS: The "Extract" Button only works if you have decompiled a class!
-#### OBS: Remember to put .java on the end of the file! (if you forget it, JByteCustom will do it for you!)
+```txt
+OBS: The "Extract" Button only works if you have decompiled a class!
+OBS: Remember to put .java on the end of the file! (if you forget it, JByteCustom will do it for you!)
+```
 
 ## Contributors
 - SynnK (me) (changed some things, like rpc, etc...)
