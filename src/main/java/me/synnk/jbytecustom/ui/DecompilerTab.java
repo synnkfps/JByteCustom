@@ -77,32 +77,12 @@ public class DecompilerTab extends JPanel {
 
         JButton extract = new JButton("Extract");
         extract.addActionListener(e -> {
-            String location = "";
-            String content = DecompilerOutput.decompiledClass; // decompiled class content
-
-            JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.home") + File.separator + "Documents"));
-            if (Objects.equals(DecompilerOutput.decompiledClassName, null)) {
-                JOptionPane.showMessageDialog(this, "You did not selected a file.");
-            } else {
-                jfc.setSelectedFile(new File(DecompilerOutput.decompiledClassName + ".java"));
-                jfc.setAcceptAllFileFilterUsed(false);
-                jfc.setFileFilter(new FileNameExtensionFilter("Java File (*.java)", "java"));
-                int result = jfc.showSaveDialog(this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    location = jfc.getSelectedFile().getAbsolutePath();
-                    // Prevent empty file extension
-                    if (!jfc.getSelectedFile().getName().endsWith(".java")) {
-                        location = location + ".java";
-                    }
-                    File input = jfc.getSelectedFile();
-                    JByteCustom.LOGGER.log("Selected output file: " + location);
-                    try (FileWriter writer = new FileWriter(location);
-                         BufferedWriter bw = new BufferedWriter(writer)) {
-
-                        bw.write(content);
-                    } catch (IOException err) { System.err.format("IOException: %s%n", err); }
-                }
-            }
+            jbm.extractFile(
+                    System.getProperty("user.home") + File.separator + "Documents",
+                    DecompilerOutput.decompiledClassName + ".java",
+                    DecompilerOutput.decompiledClass, // content
+                    DecompilerOutput.decompiledClassName, // suggest name
+                    "java"); // extensions
 
         });
         rs.add(reload);

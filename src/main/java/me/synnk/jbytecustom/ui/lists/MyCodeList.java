@@ -586,6 +586,7 @@ public class MyCodeList extends JList<InstrEntry> {
         LazyListModel<InstrEntry> lm = new LazyListModel<InstrEntry>();
         editor.setText(cn.name + " Fields");
         ArrayList<InstrEntry> entries = new ArrayList<>();
+        // A cada FieldNode entre cn.fields
         for (FieldNode fn : cn.fields) {
             InstrEntry entry = new FieldEntry(cn, fn);
             lm.addElement(entry);

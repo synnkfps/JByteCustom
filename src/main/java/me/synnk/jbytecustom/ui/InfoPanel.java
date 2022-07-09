@@ -9,16 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class InfoPanel extends JPanel {
-
     private static Color bg;
-
-    static {
-        bg = UIManager.getLookAndFeelDefaults().getColor("nimbusLightBackground");
-        if (bg == null) {
-            //for look and feel changes
-            bg = new Color(255, 255, 255);
-        }
-    }
 
     private final JDesktopPane deskPane;
     private final JByteCustom jbm;

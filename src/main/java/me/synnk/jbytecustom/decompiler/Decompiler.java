@@ -48,10 +48,7 @@ public abstract class Decompiler extends Thread {
 
     protected String decompile(ClassNode cn, MethodNode mn) {
         if (cn.equals(last)
-                && ((lastMn == null && mn == null)
-                || (mn != null
-                && mn.equals(lastMn)))) {
-            // same node, same output
+                && ((lastMn == null && mn == null) || (mn != null && lastMn != null && mn.equals(lastMn)))) {
             return lastOutput;
         }
         last = cn;

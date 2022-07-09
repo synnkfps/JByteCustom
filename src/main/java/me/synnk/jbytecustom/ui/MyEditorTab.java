@@ -135,14 +135,6 @@ public class MyEditorTab extends JPanel {
         String regexed = cn.name.toString();
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
-        DecompilerOutput.decompiledClassName = regexed.replaceAll(".+/", "");
-
-        if (RPCFrame.fieldState.getText().isEmpty()) {
-            CustomRPC.customStatus = "Editing " + regexed.replaceAll(".+/", "") + ".class";
-
-            Discord.presence.state = CustomRPC.customStatus;
-            Discord.refresh();
-        }
 
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, null, true);
@@ -157,12 +149,7 @@ public class MyEditorTab extends JPanel {
         String regexed = cn.name.toString();
         final Pattern pattern = Pattern.compile(".+/", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(regexed);
-        if (RPCFrame.fieldState.getText().isEmpty()) {
-            CustomRPC.customStatus = "Editing " + regexed.replaceAll(".+/", "") + ".class ("+mn.name+" method)";
 
-            Discord.presence.state = CustomRPC.customStatus;
-            Discord.refresh();
-        }
         if (decompilerBtn.isSelected()) {
             decompiler.decompile(cn, mn, true);
         }

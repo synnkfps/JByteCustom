@@ -3,6 +3,7 @@ package me.synnk.jbytecustom;
 import com.sun.tools.attach.VirtualMachine;
 import me.lpk.util.ASMUtils;
 import me.lpk.util.OpUtils;
+import me.synnk.jbytecustom.decompiler.DecompilerOutput;
 import me.synnk.jbytecustom.discord.Discord;
 import me.synnk.jbytecustom.logging.Logging;
 import me.synnk.jbytecustom.res.LanguageRes;
@@ -17,30 +18,32 @@ import me.synnk.jbytecustom.utils.attach.RuntimeJarArchive;
 import me.synnk.jbytecustom.utils.gui.LookUtils;
 import me.synnk.jbytecustom.utils.task.*;
 import org.apache.commons.cli.*;
+import org.jfree.chart.util.ArrayUtils;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class JByteCustom extends JFrame {
-    public final static String version = "1.1.7";
+    public final static String version = "1.1.8";
     private static final String jbytemod = "JByteCustom" + " " + version;
 
-
-    Dimension size = Toolkit.getDefaultToolkit().getScreenSize(); // screen
     public static File workingDir = new File(".");
     public static String configPath = "jbytemod.cfg";
     public static Logging LOGGER;
@@ -57,7 +60,8 @@ public class JByteCustom extends JFrame {
     static {
         try {
             System.loadLibrary("attach");
-        } catch (Throwable ex) {
+        } catch (Throwable ignored) {
+
         }
     }
 
@@ -102,12 +106,10 @@ public class JByteCustom extends JFrame {
         if (border == null) {
             border = new Color(146, 151, 161);
         }
+        // Start on the middle of the screen
+        this.setSize(1024, 640);
+        this.setLocationRelativeTo(null);
 
-        int width = (int)size.getWidth(); // X
-        int height = (int)size.getHeight(); // Y
-
-        System.out.println("Screen Size: " + width + "x" + height);
-        this.setBounds(width/8, 0, 1024, 640);
         this.setTitle(jbytemod);
         this.setJMenuBar(myMenuBar = new MyMenuBar(this, agent));
         this.jarTree = new ClassTree(this);
@@ -118,7 +120,6 @@ public class JByteCustom extends JFrame {
         this.setTCBList(new TCBList());
         this.setLVPList(new LVPList());
         JPanel border = new JPanel();
-
         border.setLayout(new GridLayout());
         JSplitPane splitPane = new MySplitPane(this, jarTree);
         JPanel b2 = new JPanel();
@@ -364,9 +365,45 @@ public class JByteCustom extends JFrame {
         this.refreshTree();
     }
 
-    // RESET
-    public void resetWorkspace() {
+    // Function to Save a File.
+    // Author: SynnK
+    // Arguments: path, filename, content, suggestname, extensions
 
+    public void extractFile(String path, String fileName, String fileContent, String suggestName, String extension) {
+        String location;
+        if (DecompilerOutput.decompiledClassName == null) {
+            JOptionPane.showMessageDialog(null, "No Class is selected!");
+        } else {
+            JFileChooser jfc = new JFileChooser(new File(path));
+
+            jfc.setSelectedFile(new File(suggestName + ".java"));
+            jfc.setAcceptAllFileFilterUsed(false);
+
+            jfc.setFileFilter(new FileNameExtensionFilter("Java File (*.java)", extension));
+
+            int result = jfc.showSaveDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                location = jfc.getSelectedFile().getPath();
+                // Prevent null extension
+                if (!jfc.getSelectedFile().getName().endsWith(".java")) {
+                    location = location + ".java";
+                }
+                if (FileUtils.exists(new File(location))) {
+                    LOGGER.err("File already exists.");
+                } else {
+                    JByteCustom.LOGGER.log("Selected output file: " + location);
+                    try (FileWriter writer = new FileWriter(location);
+                         BufferedWriter bw = new BufferedWriter(writer)) {
+                        bw.write(fileContent);
+                    } catch (IOException err) {
+                        System.err.format("IOException: %s%n", err);
+                    } finally {
+                        JByteCustom.LOGGER.log("Extracted class '" + fileName + "' to " + location);
+                    }
+                }
+            }
+        }
     }
 
     public void refreshTree() {
@@ -383,6 +420,7 @@ public class JByteCustom extends JFrame {
     }
 
     public void selectClass(ClassNode cn) {
+        DecompilerOutput.decompiledClassName = cn.name;
         if (ops.get("select_code_tab").getBoolean()) {
             tabbedPane.setSelectedIndex(0);
         }

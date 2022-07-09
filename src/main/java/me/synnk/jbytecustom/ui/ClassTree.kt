@@ -1,390 +1,420 @@
-package me.synnk.jbytecustom.ui;
+package me.synnk.jbytecustom.ui
 
-import me.synnk.jbytecustom.JByteCustom;
-import me.synnk.jbytecustom.JarArchive;
-import me.synnk.jbytecustom.decompiler.Decompiler;
-import me.synnk.jbytecustom.decompiler.Decompilers;
-import me.synnk.jbytecustom.ui.dialogue.InsnEditDialogue;
-import me.synnk.jbytecustom.ui.tree.SortedTreeNode;
-import me.synnk.jbytecustom.utils.ErrorDisplay;
-import me.synnk.jbytecustom.utils.MethodUtils;
-import me.synnk.jbytecustom.utils.asm.FrameGen;
-import me.lpk.util.drop.IDropUser;
-import me.lpk.util.drop.JarDropHandler;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import me.lpk.util.drop.IDropUser
+import me.lpk.util.drop.JarDropHandler
+import me.synnk.jbytecustom.JByteCustom
+import me.synnk.jbytecustom.JarArchive
+import me.synnk.jbytecustom.ui.dialogue.InsnEditDialogue
+import me.synnk.jbytecustom.ui.tree.SortedTreeNode
+import me.synnk.jbytecustom.utils.ErrorDisplay
+import me.synnk.jbytecustom.utils.MethodUtils
+import me.synnk.jbytecustom.utils.asm.FrameGen
+import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.tree.MethodNode
+import java.awt.event.ActionListener
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.io.File
+import javax.swing.*
+import javax.swing.event.TreeSelectionListener
+import javax.swing.tree.*
 
-import javax.swing.*;
-import javax.swing.tree.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
+class ClassTree(private val jbm: JByteCustom) : JTree(), IDropUser {
+    private val model: DefaultTreeModel
+    private var preloadMap: HashMap<String, SortedTreeNode?>? = null
 
-public class ClassTree extends JTree implements IDropUser {
-
-    private static final ArrayList<Object> expandedNodes = new ArrayList<>();
-    private final JByteCustom jbm;
-    private final DefaultTreeModel model;
-
-    public ClassTree(JByteCustom jam) {
-        this.jbm = jam;
-        this.setRootVisible(false);
-        this.setShowsRootHandles(true);
-        this.setCellRenderer(new TreeCellRenderer());
-        this.addTreeSelectionListener(e -> {
-            SortedTreeNode node = (SortedTreeNode) ClassTree.this.getLastSelectedPathComponent();
-            if (node == null)
-                return;
-            if (node.getCn() != null && node.getMn() != null) {
-                jam.selectMethod(node.getCn(), node.getMn());
-            } else if (node.getCn() != null) {
-                jam.selectClass(node.getCn());
+    init {
+        this.isRootVisible = false
+        setShowsRootHandles(true)
+        setCellRenderer(TreeCellRenderer())
+        addTreeSelectionListener(TreeSelectionListener {
+            val node = this@ClassTree.lastSelectedPathComponent as SortedTreeNode ?: return@TreeSelectionListener
+            if (node.cn != null && node.mn != null) {
+                jbm.selectMethod(node.cn, node.mn)
+            } else if (node.cn != null) {
+                jbm.selectClass(node.cn)
+            } else {
             }
-        });
-        this.model = new DefaultTreeModel(new SortedTreeNode(""));
-        this.setModel(model);
-        this.setTransferHandler(new JarDropHandler(this, 0));
-        this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        })
+        model = DefaultTreeModel(SortedTreeNode(""))
+        setModel(model)
+        this.transferHandler = JarDropHandler(this, 0)
+        getSelectionModel().selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
     }
 
-    public void refreshTree(JarArchive jar) {
-        DefaultTreeModel tm = this.model;
-        SortedTreeNode root = (SortedTreeNode) tm.getRoot();
-        root.removeAllChildren();
-        tm.reload();
-
-        HashMap<String, SortedTreeNode> preloadMap = new HashMap<>();
-        if (jar.getClasses() != null)
-            for (ClassNode c : jar.getClasses().values()) {
-                String name = c.name;
-                String[] path = array_unique(name.split("/"));
-                name = String.join("/", path);
-
-                int i = 0;
-                int slashIndex = 0;
-                SortedTreeNode prev = root;
-                while (true) {
-                    slashIndex = name.indexOf("/", slashIndex + 1);
-                    if (slashIndex == -1) {
-                        break;
-                    }
-                    String p = name.substring(0, slashIndex);
-                    if (preloadMap.containsKey(p)) {
-                        prev = preloadMap.get(p);
-                    } else {
-                        try{
-                            SortedTreeNode stn = new SortedTreeNode(path[i]);
-                            prev.add(stn);
-                            prev = stn;
-                            preloadMap.put(p, prev);
-                        }catch(ArrayIndexOutOfBoundsException ex){
-                            JByteCustom.LOGGER.println("Failed to load " + path[i]);
-                        }
-                    }
-                    i++;
+    fun refreshTree(jar: JarArchive) {
+        val tm = model
+        val root = tm.root as SortedTreeNode
+        root.removeAllChildren()
+        tm.reload()
+        preloadMap = HashMap()
+        if (jar.classes != null) for (c in jar.classes.values) {
+            var name = c.name
+            val path = array_unique(name.split("/".toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray())
+            name = java.lang.String.join("/", *path)
+            var i = 0
+            var slashIndex = 0
+            var prev: SortedTreeNode? = root
+            while (true) {
+                slashIndex = name.indexOf("/", slashIndex + 1)
+                if (slashIndex == -1) {
+                    break
                 }
-                SortedTreeNode clazz = new SortedTreeNode(c);
-                prev.add(clazz);
-                for (MethodNode m : c.methods) {
-                    clazz.add(new SortedTreeNode(c, m));
+                val p = name.substring(0, slashIndex)
+                if (preloadMap!!.containsKey(p)) {
+                    prev = preloadMap!![p]
+                } else {
+                    try {
+                        val stn = SortedTreeNode(path[i])
+                        prev!!.add(stn)
+                        prev = stn
+                        preloadMap!![p] = prev
+                    } catch (ex: ArrayIndexOutOfBoundsException) {
+                        JByteCustom.LOGGER.println("Failed to load " + path[i])
+                    }
                 }
+                i++
             }
-        boolean sort = JByteCustom.ops.get("sort_methods").getBoolean();
-        sort(tm, root, sort);
-        tm.reload();
-        addListener();
+            val clazz = SortedTreeNode(c)
+            prev!!.add(clazz)
+
+            // for each method in c.methods
+            for (m in c.methods) {
+                clazz.add(SortedTreeNode(c, m))
+            }
+        }
+        val sort = JByteCustom.ops["sort_methods"].boolean
+        sort(tm, root, sort)
+        tm.reload()
+        addListener()
         if (!expandedNodes.isEmpty()) {
-            expandSaved(root);
+            expandSaved(root)
         }
     }
 
-
-    public static String[] array_unique(String[] ss) {
-        // array_unique
-        List<String> list = new ArrayList<>();
-        for(String s:ss){
-            if(!list.contains(s)) list.add(s);
-        }
-        return list.toArray(new String[0]);
-    }
-
-    public void expandSaved(SortedTreeNode node) {
-        TreePath tp = new TreePath(node.getPath());
-        if (node.getCn() != null && expandedNodes.contains(node.getCn())) {
-            super.expandPath(tp);
+    fun expandSaved(node: SortedTreeNode) {
+        val tp = TreePath(node.path)
+        if (node.cn != null && expandedNodes.contains(node.cn)) {
+            super.expandPath(tp)
         }
         if (expandedNodes.contains(tp.toString())) {
-            super.expandPath(tp);
+            super.expandPath(tp)
         }
-        if (node.getChildCount() >= 0) {
-            for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
-                SortedTreeNode n = (SortedTreeNode) e.nextElement();
-                expandSaved(n);
+        if (node.childCount >= 0) {
+            val e = node.children()
+            while (e.hasMoreElements()) {
+                val n = e.nextElement() as SortedTreeNode
+                expandSaved(n)
             }
         }
     }
 
-    @Override
-    public void expandPath(TreePath path) {
-        SortedTreeNode stn = (SortedTreeNode) path.getLastPathComponent();
-        if (stn.getCn() != null) {
-            expandedNodes.add(stn.getCn());
-
+    override fun expandPath(path: TreePath) {
+        val stn = path.lastPathComponent as SortedTreeNode
+        if (stn.cn != null) {
+            expandedNodes.add(stn.cn)
         } else {
-            expandedNodes.add(path.toString());
+            expandedNodes.add(path.toString())
         }
-        super.expandPath(path);
+        super.expandPath(path)
     }
 
-    @Override
-    public void collapsePath(TreePath path) {
-        SortedTreeNode stn = (SortedTreeNode) path.getLastPathComponent();
-        if (stn.getCn() != null) {
-            expandedNodes.remove(stn.getCn());
+    override fun collapsePath(path: TreePath) {
+        val stn = path.lastPathComponent as SortedTreeNode
+        if (stn.cn != null) {
+            expandedNodes.remove(stn.cn)
         } else {
-            expandedNodes.remove(path.toString());
+            expandedNodes.remove(path.toString())
         }
-        super.collapsePath(path);
+        super.collapsePath(path)
     }
 
-    private void addListener() {
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent me) {
+    private fun addListener() {
+        addMouseListener(object : MouseAdapter() {
+            override fun mousePressed(me: MouseEvent) {
                 if (SwingUtilities.isRightMouseButton(me)) {
-                    TreePath tp = ClassTree.this.getPathForLocation(me.getX(), me.getY());
-                    if (tp != null && tp.getParentPath() != null) {
-                        ClassTree.this.setSelectionPath(tp);
-                        if (ClassTree.this.getLastSelectedPathComponent() == null) {
-                            return;
+                    val tp = getPathForLocation(me.x, me.y)
+                    if (tp != null && tp.parentPath != null) {
+                        this@ClassTree.selectionPath = tp
+                        if (this@ClassTree.lastSelectedPathComponent == null) {
+                            return
                         }
-                        SortedTreeNode stn = (SortedTreeNode) ClassTree.this.getLastSelectedPathComponent();
-                        MethodNode mn = stn.getMn();
-                        ClassNode cn = stn.getCn();
-
+                        val stn = this@ClassTree.lastSelectedPathComponent as SortedTreeNode
+                        val mn = stn.mn
+                        val cn = stn.cn
                         if (mn != null) {
                             //method selected
-                            JPopupMenu menu = new JPopupMenu();
-                            JMenuItem edit = new JMenuItem(JByteCustom.res.getResource("edit"));
-                            edit.addActionListener(e -> {
-                                new InsnEditDialogue(mn, mn).open();
-                                changedChild((TreeNode) model.getRoot());
-                            });
-                            menu.add(edit);
-                            JMenuItem duplicate = new JMenuItem(JByteCustom.res.getResource("duplicate"));
-                            duplicate.addActionListener(e -> {
-                                MethodNode dup = MethodUtils.copy(mn);
-                                String name = JOptionPane.showInputDialog(null, "Duplicated method name ?", "Rename", JOptionPane.QUESTION_MESSAGE);
-                                if(MethodUtils.equalName(cn, name)){
-                                    JOptionPane.showMessageDialog(null, "The name is already existed.", "Existed Name!", JOptionPane.WARNING_MESSAGE);
-                                    return;
+                            val menu = JPopupMenu()
+                            val edit = JMenuItem(JByteCustom.res.getResource("edit"))
+                            edit.addActionListener {
+                                InsnEditDialogue(mn, mn).open()
+                                changedChilds(model.root as TreeNode)
+                            }
+                            menu.add(edit)
+                            val duplicate = JMenuItem(JByteCustom.res.getResource("duplicate"))
+                            duplicate.addActionListener(ActionListener {
+                                val dup = MethodUtils.copy(mn)
+                                val name = JOptionPane.showInputDialog(
+                                    null,
+                                    "Duplicated method name ?",
+                                    "Rename",
+                                    JOptionPane.QUESTION_MESSAGE
+                                )
+                                if (MethodUtils.equalName(cn, name)) {
+                                    JOptionPane.showMessageDialog(
+                                        null,
+                                        "The name is already existed.",
+                                        "Existed Name!",
+                                        JOptionPane.WARNING_MESSAGE
+                                    )
+                                    return@ActionListener
                                 }
-                                dup.name = name;
-                                cn.methods.add(dup);
-                                jbm.getJarTree().refreshTree(jbm.getFile());
-                            });
-                            menu.add(duplicate);
-                            JMenuItem search = new JMenuItem(JByteCustom.res.getResource("search"));
-                            search.addActionListener(e -> jbm.getSearchList().searchForFMInsn(cn.name, mn.name, mn.desc, false, false));
-                            menu.add(search);
-                            JMenuItem remove = new JMenuItem(JByteCustom.res.getResource("remove"));
-                            remove.addActionListener(e -> {
-                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
-                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                    cn.methods.remove(mn);
-                                    model.removeNodeFromParent(stn);
+                                dup.name = name
+                                cn!!.methods.add(dup)
+                                jbm.jarTree.refreshTree(jbm.file)
+                            })
+                            menu.add(duplicate)
+                            val search = JMenuItem(JByteCustom.res.getResource("search"))
+                            search.addActionListener {
+                                jbm.searchList.searchForFMInsn(
+                                    cn!!.name,
+                                    mn.name,
+                                    mn.desc,
+                                    false,
+                                    false
+                                )
+                            }
+                            menu.add(search)
+                            val remove = JMenuItem(JByteCustom.res.getResource("remove"))
+                            remove.addActionListener {
+                                if (JOptionPane.showConfirmDialog(
+                                        JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION
+                                    ) == JOptionPane.YES_OPTION
+                                ) {
+                                    cn!!.methods.remove(mn)
+                                    model.removeNodeFromParent(stn)
                                 }
-                            });
-                            menu.add(remove);
-                            JMenu tools = new JMenu(JByteCustom.res.getResource("tools"));
-                            JMenuItem clear = new JMenuItem(JByteCustom.res.getResource("clear"));
-                            clear.addActionListener(e -> {
-                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_clear"), JByteCustom.res.getResource("confirm"),
-                                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                    MethodUtils.clear(mn);
-                                    jbm.selectMethod(cn, mn);
+                            }
+                            menu.add(remove)
+                            val tools = JMenu(JByteCustom.res.getResource("tools"))
+                            val clear = JMenuItem(JByteCustom.res.getResource("clear"))
+                            clear.addActionListener {
+                                if (JOptionPane.showConfirmDialog(
+                                        JByteCustom.instance,
+                                        JByteCustom.res.getResource("confirm_clear"),
+                                        JByteCustom.res.getResource("confirm"),
+                                        JOptionPane.YES_NO_OPTION
+                                    ) == JOptionPane.YES_OPTION
+                                ) {
+                                    MethodUtils.clear(mn)
+                                    jbm.selectMethod(cn, mn)
                                 }
-                            });
-                            tools.add(clear);
-
-                            JMenuItem lines = new JMenuItem(JByteCustom.res.getResource("remove_lines"));
-                            lines.addActionListener(e -> {
-                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_lines"), JByteCustom.res.getResource("confirm"),
-                                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                    MethodUtils.removeLines(mn);
-                                    jbm.selectMethod(cn, mn);
+                            }
+                            tools.add(clear)
+                            val lines = JMenuItem(JByteCustom.res.getResource("remove_lines"))
+                            lines.addActionListener {
+                                if (JOptionPane.showConfirmDialog(
+                                        JByteCustom.instance,
+                                        JByteCustom.res.getResource("confirm_lines"),
+                                        JByteCustom.res.getResource("confirm"),
+                                        JOptionPane.YES_NO_OPTION
+                                    ) == JOptionPane.YES_OPTION
+                                ) {
+                                    MethodUtils.removeLines(mn)
+                                    jbm.selectMethod(cn, mn)
                                 }
-                            });
-                            tools.add(lines);
-                            JMenuItem deadcode = new JMenuItem(JByteCustom.res.getResource("remove_dead_code"));
-                            deadcode.addActionListener(e -> {
-                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_dead_code"),
-                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                    MethodUtils.removeDeadCode(cn, mn);
-                                    jbm.selectMethod(cn, mn);
+                            }
+                            tools.add(lines)
+                            val deadcode = JMenuItem(JByteCustom.res.getResource("remove_dead_code"))
+                            deadcode.addActionListener {
+                                if (JOptionPane.showConfirmDialog(
+                                        JByteCustom.instance, JByteCustom.res.getResource("confirm_dead_code"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION
+                                    ) == JOptionPane.YES_OPTION
+                                ) {
+                                    MethodUtils.removeDeadCode(cn, mn)
+                                    jbm.selectMethod(cn, mn)
                                 }
-                            });
-                            tools.add(deadcode);
-                            menu.add(tools);
-                            menu.show(ClassTree.this, me.getX(), me.getY());
+                            }
+                            tools.add(deadcode)
+                            menu.add(tools)
+                            menu.show(this@ClassTree, me.x, me.y)
                         } else if (cn != null) {
                             //class selected
-                            JPopupMenu menu = new JPopupMenu();
-                            JMenuItem insert = new JMenuItem(JByteCustom.res.getResource("add_method"));
-                            insert.addActionListener(e -> {
-                                MethodNode mn1 = new MethodNode(1, "", "()V", null, null);
-                                mn1.maxLocals = 1;
-                                if (new InsnEditDialogue(mn1, mn1).open()) {
-                                    if (mn1.name.isEmpty() || mn1.desc.isEmpty()) {
-                                        ErrorDisplay.error("Method name / desc cannot be empty");
-                                        return;
+                            val menu = JPopupMenu()
+                            val insert = JMenuItem(JByteCustom.res.getResource("add_method"))
+                            insert.addActionListener(ActionListener {
+                                val mn = MethodNode(1, "", "()V", null, null)
+                                mn.maxLocals = 1
+                                if (InsnEditDialogue(mn, mn).open()) {
+                                    if (mn.name.isEmpty() || mn.desc.isEmpty()) {
+                                        ErrorDisplay.error("Method name / desc cannot be empty")
+                                        return@ActionListener
                                     }
-                                    cn.methods.add(mn1);
-                                    model.insertNodeInto(new SortedTreeNode(cn, mn1), stn, 0);
+                                    cn.methods.add(mn)
+                                    model.insertNodeInto(SortedTreeNode(cn, mn), stn, 0)
                                 }
-                            });
-                            menu.add(insert);
-
-                            JMenuItem edit = new JMenuItem(JByteCustom.res.getResource("edit"));
-                            edit.addActionListener(e -> {
-                                if (new InsnEditDialogue(mn, cn).open()) {
-                                    jbm.refreshTree();
+                            })
+                            menu.add(insert)
+                            val edit = JMenuItem(JByteCustom.res.getResource("edit"))
+                            edit.addActionListener {
+                                if (InsnEditDialogue(mn, cn).open()) {
+                                    jbm.refreshTree()
                                 }
-                            });
-                            menu.add(edit);
-                            JMenu tools = new JMenu(JByteCustom.res.getResource("tools"));
-                            JMenuItem frames = new JMenuItem(JByteCustom.res.getResource("generate_frames"));
-                            frames.addActionListener(e -> FrameGen.regenerateFrames(jbm, cn));
-                            JMenuItem remove = new JMenuItem(JByteCustom.res.getResource("remove"));
-                            remove.addActionListener(e -> {
-                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
-                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                    jbm.getFile().getClasses().remove(cn.name);
-                                    TreeNode parent = stn.getParent();
-                                    model.removeNodeFromParent(stn);
-                                    while (parent != null && !parent.children().hasMoreElements() && parent != model.getRoot()) {
-                                        TreeNode par = parent.getParent();
-                                        model.removeNodeFromParent((MutableTreeNode) parent);
-                                        parent = par;
+                            }
+                            menu.add(edit)
+                            val tools = JMenu(JByteCustom.res.getResource("tools"))
+                            val frames = JMenuItem(JByteCustom.res.getResource("generate_frames"))
+                            frames.addActionListener { FrameGen.regenerateFrames(jbm, cn) }
+                            val remove = JMenuItem(JByteCustom.res.getResource("remove"))
+                            remove.addActionListener {
+                                if (JOptionPane.showConfirmDialog(
+                                        JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION
+                                    ) == JOptionPane.YES_OPTION
+                                ) {
+                                    jbm.file.classes.remove(cn.name)
+                                    var parent = stn.parent
+                                    model.removeNodeFromParent(stn)
+                                    while (parent != null && !parent.children()
+                                            .hasMoreElements() && parent !== model.root
+                                    ) {
+                                        val par = parent.parent
+                                        model.removeNodeFromParent(parent as MutableTreeNode)
+                                        parent = par
                                     }
                                 }
-                            });
-                            menu.add(remove);
-                            tools.add(frames);
-                            menu.add(tools);
-                            menu.show(ClassTree.this, me.getX(), me.getY());
+                            }
+                            menu.add(remove)
+                            tools.add(frames)
+                            menu.add(tools)
+                            menu.show(this@ClassTree, me.x, me.y)
                         } else {
-                            JPopupMenu menu = new JPopupMenu();
-                            JMenuItem remove = new JMenuItem(JByteCustom.res.getResource("remove"));
-                            remove.addActionListener(e -> {
-                                if (JOptionPane.showConfirmDialog(JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
-                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                    TreeNode parent = stn.getParent();
-                                    deleteItselfAndChild(stn);
-                                    while (parent != null && !parent.children().hasMoreElements() && parent != model.getRoot()) {
-                                        TreeNode par = parent.getParent();
-                                        model.removeNodeFromParent((MutableTreeNode) parent);
-                                        parent = par;
+                            val menu = JPopupMenu()
+                            val remove = JMenuItem(JByteCustom.res.getResource("remove"))
+                            remove.addActionListener {
+                                if (JOptionPane.showConfirmDialog(
+                                        JByteCustom.instance, JByteCustom.res.getResource("confirm_remove"),
+                                        JByteCustom.res.getResource("confirm"), JOptionPane.YES_NO_OPTION
+                                    ) == JOptionPane.YES_OPTION
+                                ) {
+                                    var parent = stn.parent
+                                    deleteItselfAndChilds(stn)
+                                    while (parent != null && !parent!!.children()
+                                            .hasMoreElements() && parent !== model.root
+                                    ) {
+                                        val par = parent!!.parent
+                                        model.removeNodeFromParent(parent as MutableTreeNode)
+                                        parent = par
                                     }
                                 }
-                            });
-                            menu.add(remove);
-                            JMenuItem add = new JMenuItem(JByteCustom.res.getResource("add"));
-                            add.addActionListener(e -> {
-                                ClassNode cn1 = new ClassNode();
-                                cn1.version = 52;
-                                cn1.name = getPath(stn);
-                                cn1.superName = "java/lang/Object";
-                                if (new InsnEditDialogue(mn, cn1).open()) {
-                                    jbm.getFile().getClasses().put(cn1.name, cn1);
-                                    jbm.refreshTree();
+                            }
+                            menu.add(remove)
+                            val add = JMenuItem(JByteCustom.res.getResource("add"))
+                            add.addActionListener {
+                                val cn = ClassNode()
+                                cn.version = 52
+                                cn.name = getPath(stn)
+                                cn.superName = "java/lang/Object"
+                                if (InsnEditDialogue(mn, cn).open()) {
+                                    jbm.file.classes[cn.name] = cn
+                                    jbm.refreshTree()
                                 }
-                            });
-                            menu.add(add);
-                            menu.show(ClassTree.this, me.getX(), me.getY());
+                            }
+                            menu.add(add)
+                            menu.show(this@ClassTree, me.x, me.y)
                         }
                     }
                 } else {
-                    TreePath tp = ClassTree.this.getPathForLocation(me.getX(), me.getY());
-                    if (tp != null && tp.getParentPath() != null) {
-                        ClassTree.this.setSelectionPath(tp);
-                        if (ClassTree.this.getLastSelectedPathComponent() == null) {
-                            return;
+                    val tp = getPathForLocation(me.x, me.y)
+                    if (tp != null && tp.parentPath != null) {
+                        this@ClassTree.selectionPath = tp
+                        if (this@ClassTree.lastSelectedPathComponent == null) {
+                            return
                         }
-                        SortedTreeNode stn = (SortedTreeNode) ClassTree.this.getLastSelectedPathComponent();
-                        if (stn.getMn() == null && stn.getCn() == null) {
-                            if (ClassTree.this.isExpanded(tp)) {
-                                ClassTree.this.collapsePath(tp);
+                        val stn = this@ClassTree.lastSelectedPathComponent as SortedTreeNode
+                        if (stn.mn == null && stn.cn == null) {
+                            if (this@ClassTree.isExpanded(tp)) {
+                                collapsePath(tp)
                             } else {
-                                ClassTree.this.expandPath(tp);
+                                expandPath(tp)
                             }
                         }
                     }
                 }
             }
-        });
+        })
     }
 
-    private String getPath(SortedTreeNode stn) {
-        StringBuilder path = new StringBuilder();
-        while (stn != null && stn != model.getRoot()) {
-            path.insert(0, stn + "/");
-            stn = (SortedTreeNode) stn.getParent();
+    private fun getPath(stn: SortedTreeNode): String {
+        var stn: SortedTreeNode? = stn
+        var path = ""
+        while (stn != null && stn !== model.root) {
+            path = "$stn/$path"
+            stn = stn.parent as SortedTreeNode
         }
-        return path.toString();
+        return path
     }
 
-    private void sort(DefaultTreeModel model, SortedTreeNode node, boolean sm) {
-        if (!node.isLeaf() && (sm || (!node.toString().endsWith(".class")))) {
-            node.sort();
-            for (int i = 0; i < model.getChildCount(node); i++) {
-                SortedTreeNode child = ((SortedTreeNode) model.getChild(node, i));
-                sort(model, child, sm);
+    private fun sort(model: DefaultTreeModel, node: SortedTreeNode, sm: Boolean) {
+        if (!node.isLeaf && (if (sm) true else !node.toString().endsWith(".class"))) {
+            node.sort()
+            for (i in 0 until model.getChildCount(node)) {
+                val child = model.getChild(node, i) as SortedTreeNode
+                sort(model, child, sm)
             }
         }
     }
 
-    @Override
-    public void preLoadJars(int id) {
-
+    override fun preLoadJars(id: Int) {}
+    override fun onJarLoad(id: Int, input: File) {
+        jbm.loadFile(input)
     }
 
-    @Override
-    public void onJarLoad(int id, File input) {
-        jbm.loadFile(input);
+    fun refreshMethod(cn: ClassNode?, mn: MethodNode?) {
+        changedChilds(model.root as TreeNode)
     }
 
-    public void refreshMethod(ClassNode cn, MethodNode mn) {
-        changedChild((TreeNode) model.getRoot());
-    }
-
-    public void changedChild(TreeNode node) {
-        model.nodeChanged(node);
-        if (node.getChildCount() >= 0) {
-            for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
-                TreeNode n = (TreeNode) e.nextElement();
-                changedChild(n);
+    fun changedChilds(node: TreeNode) {
+        model.nodeChanged(node)
+        if (node.childCount >= 0) {
+            val e = node.children()
+            while (e.hasMoreElements()) {
+                val n = e.nextElement() as TreeNode
+                changedChilds(n)
             }
         }
     }
 
-    public void deleteItselfAndChild(SortedTreeNode node) {
-        if (node.getChildCount() >= 0) {
-            for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
-                TreeNode n = (TreeNode) e.nextElement();
-                deleteItselfAndChild((SortedTreeNode) n);
+    fun deleteItselfAndChilds(node: SortedTreeNode) {
+        if (node.childCount >= 0) {
+            val e = node.children()
+            while (e.hasMoreElements()) {
+                val n = e.nextElement() as TreeNode
+                deleteItselfAndChilds(n as SortedTreeNode)
             }
         }
-        if (node.getCn() != null)
-            jbm.getFile().getClasses().remove(node.getCn().name);
-        model.removeNodeFromParent(node);
+        if (node.cn != null) jbm.file.classes.remove(node.cn.name)
+        model.removeNodeFromParent(node)
     }
 
-    public void collapseAll() {
-        expandedNodes.clear();
-        JByteCustom.instance.refreshTree();
+    fun collapseAll() {
+        expandedNodes.clear()
+        JByteCustom.instance.refreshTree()
+    }
+
+    companion object {
+        private val expandedNodes = ArrayList<Any>()
+        fun array_unique(ss: Array<String>): Array<String> {
+            // array_unique
+            val list: MutableList<String> = ArrayList()
+            for (s in ss) {
+                if (!list.contains(s)) //或者list.indexOf(s)!=-1
+                    list.add(s)
+            }
+            return list.toTypedArray()
+        }
     }
 }

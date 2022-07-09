@@ -28,7 +28,7 @@ public class SFTask extends SwingWorker<Void, Integer> {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
         LazyListModel<SearchEntry> model = new LazyListModel<>();
         Collection<ClassNode> values = jbm.getFile().getClasses().values();
         double size = values.size();

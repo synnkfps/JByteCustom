@@ -1,15 +1,18 @@
 package me.synnk.jbytecustom.ui;
 
 import android.util.Patterns;
+import com.alee.managers.plugin.Plugin;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import me.synnk.jbytecustom.CustomRPC;
 import me.synnk.jbytecustom.JByteCustom;
 import me.synnk.jbytecustom.JarArchive;
 import me.synnk.jbytecustom.discord.Discord;
+
 import me.synnk.jbytecustom.res.LanguageRes;
 import me.synnk.jbytecustom.res.Option;
 import me.synnk.jbytecustom.res.Options;
+
 import me.synnk.jbytecustom.ui.analysis.JMethodObfAnalysis;
 import me.synnk.jbytecustom.ui.analysis.JNameObfAnalysis;
 import me.synnk.jbytecustom.ui.dialogue.ClassDialogue;
@@ -47,7 +50,7 @@ public class MyMenuBar extends JMenuBar {
     public static RPCFrame rpcFrame = new RPCFrame(jbm);
 
     public MyMenuBar(JByteCustom jam, boolean agent) {
-        jbm = jam;
+        this.jbm = jam;
         this.agent = agent;
         this.initFileMenu();
         this.center = new JPanel();
@@ -73,20 +76,18 @@ public class MyMenuBar extends JMenuBar {
 
                 RPCFrame.buttonLogin.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-
-                        if (!RPCFrame.fieldState.getText().isEmpty()) {
-                            CustomRPC.state_text = RPCFrame.fieldState.getText(); // set state_text to the text box text
-                            Discord.updateCustomState(CustomRPC.state_text);
-                        } else {
-                            Discord.updateCustomState(CustomRPC.customStatus);
-                        }
-                        if (!RPCFrame.fieldDetails.getText().isEmpty()) {
-                            Discord.presence.details = RPCFrame.fieldDetails.getText();
-                            Discord.refresh();
-                        } else {
-                            Discord.updateCustomDetails(CustomRPC.customDetails);
-                        }
-                        rpcFrame.dispose();
+                        // Se o RPC State do RPCFrame estiver vazio, é porque ele vai ser vanilla
+                        //if (RPCFrame.fieldUsername.getText().equalsIgnoreCase("")) {
+                        //    CustomRPC.isCustom = false;
+                        //  Discord.refresh();
+                        //  // Se o RPC for custom (ou seja, o state não estiver vazio;
+                        //} else if (!RPCFrame.fieldUsername.getText().equalsIgnoreCase("")) {
+                        //  CustomRPC.isCustom = true;
+                        //  CustomRPC.customStatus = RPCFrame.fieldUsername.getText(); // mudar o customstatus para o custom state
+                        //  Discord.updateCustomState(RPCFrame.fieldUsername.getText()); // dar update no status
+                        //}
+                        //rpcFrame.setVisible(false);
+                        // se ele não estiver usando: fazer com que seja o rpc normal
                     }
                 });
             });
@@ -250,6 +251,22 @@ public class MyMenuBar extends JMenuBar {
         JMenu deobfTools = new JMenu(JByteCustom.res.getResource("deobf_tools"));
         utils.add(deobfTools);
 
+        JMenu raccoon = new JMenu(JByteCustom.res.getResource("raccoon"));
+        utils.add(raccoon);
+
+        JMenuItem raccoon_scan = new JMenuItem(JByteCustom.res.getResource("raccoon_scan"));
+        raccoon_scan.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if (jbm.getFile() != null && jbm.getFile().getClasses() != null) {
+                    JarArchive ja = JByteCustom.instance.getFile();
+                }else {
+                    canNotFindFile();
+                }
+            }
+        });
+        raccoon.add(raccoon_scan);
+
         JMenuItem findSF = new JMenuItem(JByteCustom.res.getResource("find_sourcefiles"));
         findSF.addActionListener(new ActionListener() {
 
@@ -319,6 +336,7 @@ public class MyMenuBar extends JMenuBar {
                 }
                 LazyListModel<SearchEntry> model = new LazyListModel<>();
                 for (final ClassNode c : jbm.getFile().getClasses().values()) {
+                    
                     for (final MethodNode m : c.methods) {
                         if (m.name.equals("main") && m.desc.equals("([Ljava/lang/String;)V")) {
                             // TODO: task
@@ -512,7 +530,7 @@ public class MyMenuBar extends JMenuBar {
         });
         deobfTools.add(remove_unconditional_switch);
 
-        // From old version of JbyteMod by Grax
+        // From old version of JByteCustom by Grax
         JMenuItem sourceRename = new JMenuItem(JByteCustom.res.getResource("rename_sourcefiles"));
         sourceRename.addActionListener(new ActionListener() {
 
@@ -652,6 +670,10 @@ public class MyMenuBar extends JMenuBar {
                         public void actionPerformed(ActionEvent e) {
                             op.setValue(jmi.isSelected());
                             o.save();
+                            if (op.getName().equals("use_weblaf")) {
+                                JByteCustom.resetLAF();
+                                JByteCustom.restartGUI();
+                            }
                         }
                     });
                     menu.add(jmi);
@@ -880,7 +902,6 @@ public class MyMenuBar extends JMenuBar {
 
     protected void openLoadDialogue() {
         JFileChooser jfc = new JFileChooser(new File(System.getProperty("user.home") + File.separator + "Desktop"));
-        jfc.setSelectedFile(new File(""));
         jfc.setAcceptAllFileFilterUsed(false);
         jfc.setFileFilter(new FileNameExtensionFilter("Java Package (*.jar) or Java Class (*.class)", "jar", "class"));
         int result = jfc.showOpenDialog(this);
@@ -888,6 +909,13 @@ public class MyMenuBar extends JMenuBar {
             File input = jfc.getSelectedFile();
             JByteCustom.LOGGER.log("Selected input file: " + input.getAbsolutePath());
             jbm.loadFile(input);
+        }
+    }
+
+    public void addPluginMenu(ArrayList<Plugin> plugins) {
+        if (!plugins.isEmpty()) {
+            JMenu pluginMenu = new JMenu("Plugins");
+            this.add(pluginMenu);
         }
     }
 
