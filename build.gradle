@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.0-RC2"
+    id "org.jetbrains.kotlin.jvm" version "1.7.10"
     id "java"
 }
 
@@ -38,7 +38,7 @@ dependencies {
     include 'org.apache.ant:ant:1.10.12'
     include 'com.google.guava:guava:31.1-jre'
     include 'com.google.code.gson:gson:2.9.0'
-    include 'net.java.dev.jna:jna:5.11.0'
+    include 'net.java.dev.jna:jna:5.12.1'
     include 'com.formdev:flatlaf:2.3'
     include files('libs/attach-1.7.jar')
     include files('libs/weblaf-complete-1.29-fixed.jar')

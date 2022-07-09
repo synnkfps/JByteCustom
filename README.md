@@ -1,5 +1,5 @@
 # JByteCustom
-A fork of JByteMod-Reborn, with more updates. 
+A **sofisticated** fork of JByteMod-Reborn, with more updates. 
 
 ## Features
 - Koffee Disassembler
@@ -7,7 +7,7 @@ A fork of JByteMod-Reborn, with more updates.
 - Up-to-date Libs
 - Discord RPC
 
-## Extracting & Building
+## Building
 1. Extract the .zip that you downloaded from github
 2. Open the extracted folder
 3. Open CMD (command prompt) on the folder (or linux terminal)
@@ -21,6 +21,21 @@ How to use:
 - Input your new custom state/details text. *leave empty if you want to reset!*<br>
 - Press Apply button for apply the changes.
 <br>
+
+## Extracting Classes
+### 1. Select your class, then switch to "Decompiler" tab.
+![](step%201.png)
+
+### 2. Click on the "Extract" button!
+![](step%202.png)
+
+### 3. Select the folder and the file name to save the decompiled class!
+![](step%203.png)
+
+```txt
+OBS: The "Extract" Button only works if you have decompiled a class!
+OBS: Remember to put .java on the end of the file! (if you forget it, JByteCustom will do it for you!)
+```
 
 ## Contributors
 - SynnK (me) (changed some things, like rpc, etc...)
