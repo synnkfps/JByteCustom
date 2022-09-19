@@ -1,5 +1,5 @@
 # JByteCustom
-A **sofisticated** fork of JByteMod-Reborn, with more updates. 
+A **sophisticated** fork of JByteMod-Reborn, with more updates. 
 
 ## Features
 - Koffee Disassembler
