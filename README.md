@@ -5,6 +5,7 @@ A **sophisticated** fork of JByteMod-Reborn, with more updates.
 - Koffee Disassembler
 - Up-to-date Decompilers.
 - Up-to-date Libs
+- Single .class files extractor / decompiler
 - Discord RPC
 
 ## Building
@@ -15,18 +16,11 @@ A **sophisticated** fork of JByteMod-Reborn, with more updates.
 5. After building, go to ../builds/libs and use the X-release.jar one.
 6. Done!
 
-## Discord RPC
-How to use:
-- After clicking on "Change RPC", a new Window will appear.
-- Input your new custom state/details text. *leave empty if you want to reset!*<br>
-- Press Apply button for apply the changes.
-<br>
-
 ## Extracting Classes
 ### 1. Select your class, then switch to "Decompiler" tab.
 ![](step%201.png)
 
-### 2. Click on the "Extract" button!
+### 2. Click on the "Extract" button
 ![](step%202.png)
 
 ### 3. Select the folder and the file name to save the decompiled class!
@@ -38,12 +32,7 @@ OBS: Remember to put .java on the end of the file! (if you forget it, JByteCusto
 ```
 
 ## Contributors
-- SynnK (me) (changed some things, like rpc, etc...)
+- SynnK (me) (added RPC, changed the theme and buttons, etc)
 - JohnShiozo (did the gradle support and updated libs)
-- xBrownieCodez (did the remaster version)
+- xBrownieCodez (owner of the remastered version)
 - GraxCode (original jbytemod dev)
-- UltraPanda
-- Ho3
-- gtx
-- Vaziak
-
