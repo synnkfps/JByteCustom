@@ -1,21 +1,42 @@
+html {
+  color: white !important;
+  background-color: rgb(13, 17, 23);
+}
+
 .title {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-style: oblique;
+  text-align: center;
 }
 
 hr {
   border: 0;
-  border-top: 2px solid rgb(217, 217, 217);
+  border-top: 2px solid rgb(27, 30, 54);
   border-radius: 12%;
 }
 
-h2, h3 {
+h2 {
   font-family: 'consolas', monospace;
+  z-index: 1;
+  text-align: center;
+}
+
+h3 {
+  font-size: 30px;
+  font-family: 'Arial';
+  font-weight: 850;
   z-index: 1;
 }
 
 .heart {
   color: #ab0000;
+}
+
+.rainbow {
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-image: linear-gradient(71.18deg, rgb(0, 34, 255) -27.32%, rgb(0, 34, 255) -16.39%, rgb(81, 121, 254) -7.38%, rgb(165, 237, 182) 30.59%, rgb(250, 232, 90) 46.06%, rgb(253, 172, 62) 62.61%, rgb(255, 92, 0) 75.82%);
+  background-clip: 1;
 }
 
 .italic {
@@ -26,10 +47,13 @@ h2, h3 {
   background-clip: 1;
 }
 
+li, a {
+  color: rgb(139, 148, 158) !important;
+  text-shadow: 0px 1px 8px #1c1c1c;
+}
 li:hover {
-  color: grey;
-  font-style: normal;
-  transition: 0.12s;
+  color: rgb(195, 195, 195) !important;
+  transition: 0.12s
 }
 
 h3 {
@@ -37,21 +61,24 @@ h3 {
 }
 
 ul {
+  color: white;
   padding-left: 17px;
   padding-top: 3px;
-  font-family: 'consolas';
+  font-smooth: always;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-a {
-  color:black;
-}
 
 a:hover {
-  color: grey;
+  color: rgb(195, 195, 195) !important;
   transition: 0.12s
 }
 
 .header {
   padding-top: 30px;
   font-family: 'consolas', monospace;
+}
+
+.features {
+  color: white;
 }
