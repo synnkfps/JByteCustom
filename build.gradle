@@ -35,7 +35,7 @@ dependencies {
     include 'org.jfree:jfreechart:1.5.3'
     include 'org.benf:cfr:0.152'
     include 'com.intellij:forms_rt:7.0.3'
-    include 'org.apache.ant:ant:1.10.12'
+    include 'org.apache.ant:ant:1.10.13'
     include 'com.google.guava:guava:31.1-jre'
     include 'com.google.code.gson:gson:2.9.1'
     include 'net.java.dev.jna:jna:5.12.1'
