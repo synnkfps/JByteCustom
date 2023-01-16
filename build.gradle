@@ -38,7 +38,7 @@ dependencies {
     include 'org.apache.ant:ant:1.10.12'
     include 'com.google.guava:guava:31.1-jre'
     include 'com.google.code.gson:gson:2.9.1'
-    include 'net.java.dev.jna:jna:5.12.1'
+    include 'net.java.dev.jna:jna:5.13.0'
     include 'com.formdev:flatlaf:2.4'
     include files('libs/attach-1.7.jar')
     include files('libs/weblaf-complete-1.29-fixed.jar')
