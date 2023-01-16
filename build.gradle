@@ -25,7 +25,7 @@ dependencies {
     include 'commons-io:commons-io:2.11.0'
     include 'commons-cli:commons-cli:1.5.0'
 
-    include 'com.fifesoft:rsyntaxtextarea:3.2.0'
+    include 'com.fifesoft:rsyntaxtextarea:3.3.2'
     include 'club.minnced:java-discord-rpc:2.0.2'
     include 'org.bitbucket.mstrobel:procyon-core:0.6.0'
     include 'org.bitbucket.mstrobel:procyon-expressions:0.6.0'
